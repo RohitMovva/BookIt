@@ -71,7 +71,7 @@ Backend:
    ```
    .\env\Scripts\activate
    ```
-   Linux:
+   Linux and Mac:
    ```
    source env/bin/activate
    ```
@@ -81,7 +81,15 @@ Backend:
    pip install -r requirements.txt
    ```
 
-4. Run app
+2. Run app:
+   
+   Windows:
+   ```
+   set FLASK_APP=app.py
+   set FLASK_ENV=development
+   flask run
+   ```
+   Linux and Mac:
    ```
    export FLASK_APP=app.py
    export FLASK_ENV=development
