@@ -4,3 +4,14 @@
 
 # virtual environment folder
 venv/
+
+# database
+instance/
+*.db
+
+# Ignore temporary files in migrations folder
+migrations/versions/*.pyc
+migrations/versions/*.pyo
+
+# ignore Python bytecode
+__pycache__/

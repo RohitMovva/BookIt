@@ -1,13 +1,24 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from app.config import Config
-from app.routes import bp as routes_bp
+# from app.routes import bp as routes_bp
+
+db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
     app.config.from_object(Config)
 
-    app.register_blueprint(routes_bp, url_prefix='/api')
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    from app import routes
+    app.register_blueprint(routes.bp)
+
+    # app.register_blueprint(routes_bp, url_prefix='/api')
 
     return app
