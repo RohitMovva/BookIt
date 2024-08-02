@@ -27,26 +27,62 @@ How to setup:
 
 6. Setup backend packages:
    
-   a. Install pip if not already installed
+   a. Install python if not already installed
+
+   b. Install virtualenv
+   ```
+   pip install virtualenv
+   ```
+
+   c. Create virtual environment
+   ```
+   cd /path/to/your/project
+   cd flask-backend
+
+   virtualenv env
+   ```
    
-   b. Run the following commands to install the python dependencies:
-   ```
-   cd backend
-   pip install -r requirements.txt
-   ```
    
 How to run the project:
 
 Frontend:
-```
-cd frontend
-pnpm run dev
-```
+
+1. cd into the frontend folder
+   ```
+   cd frontend
+   ```
+
+2. Run the frontend
+   ```
+   pnpm run dev
+   ```
 
 Backend:
-```
-cd backend
-python app.py
-```
 
+1. cd into the backend folder:
+   ```
+   cd flask-backend
+   ```
+
+2. Activate virtual environment:
    
+   Windows:
+   ```
+   .\env\Scripts\activate
+   ```
+   Linux:
+   ```
+   source env/bin/activate
+   ```
+
+3. Install dependencies if you haven't previously:
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Run app
+   ```
+   export FLASK_APP=app.py
+   export FLASK_ENV=development
+   flask run
+   ```
