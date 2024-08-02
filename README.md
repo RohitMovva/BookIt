@@ -56,6 +56,7 @@ Frontend:
    ```
    pnpm run dev
    ```
+3. Stop the frontend when you're done (ctrl+c)
 
 Backend:
 
@@ -85,4 +86,11 @@ Backend:
    export FLASK_APP=app.py
    export FLASK_ENV=development
    flask run
+   ```
+
+5. Stop the backend when you're done (ctrl+c)
+
+6. Disconnect from the virtual environment:
+   ```
+   deactivate
    ```
