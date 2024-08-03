@@ -41,6 +41,11 @@ How to setup:
 
    virtualenv env
    ```
+
+   d. Setup the database
+   ```
+   flask db upgrade
+   ```
    
    
 How to run the project:
@@ -76,7 +81,7 @@ Backend:
    source env/bin/activate
    ```
 
-3. Install dependencies if you haven't previously:
+3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```

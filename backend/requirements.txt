@@ -1,5 +1,5 @@
 Flask==3.0.3
 Flask_Cors==4.0.0
-Flask-SQLAlchemy==2.5.1
+Flask-SQLAlchemy==3.1.1
 Flask-Migrate==3.1.0
 virtualenv
