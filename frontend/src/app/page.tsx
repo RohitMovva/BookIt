@@ -1,7 +1,7 @@
 const Hero = () => {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>hello</p>
+        <p className="font-Inter">hello</p>
       </div>
     );
   };
