@@ -1,5 +1,5 @@
 # BookIt
-How to setup:
+## How to setup:
 1. Accept invitation to repo
 2. Clone repo
    
@@ -48,9 +48,9 @@ How to setup:
    ```
    
    
-How to run the project:
+## How to run the project:
 
-Frontend:
+### Frontend:
 
 1. cd into the frontend folder
    ```
@@ -63,7 +63,7 @@ Frontend:
    ```
 3. Stop the frontend when you're done (ctrl+c)
 
-Backend:
+### Backend:
 
 1. cd into the backend folder:
    ```
