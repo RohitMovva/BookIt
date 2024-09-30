@@ -1,0 +1,91 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pnpm run dev",
+      "type": "shell",
+      "hide": true,
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "frontend"
+      }
+    },
+    {
+      "label": "activate virtual environment",
+      "type": "shell",
+      "hide": true,
+	  "command": "source env/bin/activate",
+      "windows": {
+        "command": ".\\env\\Scripts\\activate"
+      },
+      "options": {
+        "cwd": "backend"
+      }
+    },
+    {
+      "label": "install dependancies",
+      "type": "shell",
+      "hide": true,
+      "command": "pip install -r requirements.txt",
+      "options": {
+        "cwd": "backend"
+      }
+    },
+    {
+      "label": "set flask app",
+      "type": "shell",
+      "hide": true,
+	  "command": "export FLASK_APP=app.py",
+      "windows": {
+        "command": "set FLASK_APP=app.py"
+      },
+      "options": {
+        "cwd": "backend"
+      }
+    },
+    {
+      "label": "set flask env",
+      "type": "shell",
+      "hide": true,
+	  "command": "export FLASK_ENV=development",
+      "windows": {
+        "command": "set FLASK_ENV=development"
+      },
+      "options": {
+        "cwd": "backend"
+      }
+    },
+    {
+      "label": "run flask app",
+      "type": "shell",
+      "hide": true,
+      "command": "flask run",
+      "options": {
+        "cwd": "backend"
+      }
+    },
+    {
+      "label": "backend stuff",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "activate virtual environment",
+        "install dependancies",
+        "set flask app",
+        "set flask env",
+        "run flask app"
+      ]
+    },
+    {
+      "label": "Run Dev Environment",
+      "dependsOn": ["pnpm run dev", "backend stuff"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
