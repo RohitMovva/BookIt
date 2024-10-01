@@ -48,7 +48,7 @@
    ```
    
    
-## How to run the project:
+## How to run the project (though this should happen automatically on folder open and on Ctrl + Shift + B):
 
 ### Frontend:
 
