@@ -6,16 +6,16 @@ export default function Page() {
   return (
     <main>
       <header>
-        <ul className="flex h-16 justify-between px-5">
-          <div className="flex h-full items-center bg-blue-200">
+        <ul className="flex h-16 justify-between p-10">
+          <div className="flex h-full items-center space-x-4">
             <li>
               <TempLogo />
             </li>
             <li>
-              <p className="text-blue-400">bookit</p>
+              <p className="text-blue-400 text-3xl">bookit</p>
             </li>
           </div>
-          <div className="flex h-full items-center bg-red-400">
+          <div className="flex h-full items-center space-x-4">
             <li>
               <Button text="Sign Up" href="/databasetest" />
             </li>
