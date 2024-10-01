@@ -12,6 +12,7 @@
     "axios": "^1.7.3",
     "next": "14.2.5",
     "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -24,5 +25,10 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   }
 }
