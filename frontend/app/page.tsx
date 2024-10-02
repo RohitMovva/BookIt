@@ -1,6 +1,7 @@
 "use client";
 import TempLogo from "./ui/temp-logo";
 import Button from "./ui/button";
+import Image from "next/image";
 
 export default function Page() {
   return (
@@ -12,12 +13,12 @@ export default function Page() {
               <TempLogo />
             </li>
             <li>
-              <p className="text-blue-400 text-3xl">bookit</p>
+              <p className="text-3xl text-blue-400">bookit</p>
             </li>
           </div>
           <div className="flex h-full items-center space-x-4">
             <li>
-              <Button text="Sign Up" href="/databasetest" />
+              <Button text="Sign Up" href="" />
             </li>
             <li>
               <Button
@@ -31,6 +32,21 @@ export default function Page() {
           </div>
         </ul>
       </header>
+      <div className="mx-52">
+        <section className="flex justify-between items-center my-28 space-x-10">
+          <div>
+            <h1 className="text-7xl mb-8">Shopping for course materials made easy</h1>
+            <Button text="Sign Up" href="" />
+          </div>
+          <Image
+            src="/placeholderparrot.jpg"
+            width={750}
+            height={500}
+            className=""
+            alt="Parrot"
+          />
+        </section>
+      </div>
     </main>
   );
 }

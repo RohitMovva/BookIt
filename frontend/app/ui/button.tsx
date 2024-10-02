@@ -23,7 +23,7 @@ export default function Button({
   const buttonContent = (
     <button
       onClick={onClick}
-      className={`${bgColor} ${textColor} ${border} ${borderColor} min-w-20 rounded-xl px-4 py-2 text-sm hover:${bgHover} transition`}
+      className={`${bgColor} ${textColor} ${border} ${borderColor} flex h-10 min-w-20 items-center justify-center rounded-xl px-4 text-sm hover:${bgHover} transition`}
     >
       {text}
     </button>
