@@ -2,6 +2,7 @@
 import TempLogo from "./ui/temp-logo";
 import Button from "./ui/button";
 import Image from "next/image";
+import SquareCard from "./ui/square-card";
 
 export default function Page() {
   return (
@@ -33,18 +34,24 @@ export default function Page() {
         </ul>
       </header>
       <div className="mx-52">
-        <section className="flex justify-between items-center my-28 space-x-10">
+        <section className="my-28 flex items-center justify-between space-x-10">
           <div>
-            <h1 className="text-7xl mb-8">Shopping for course materials made easy</h1>
+            <h1 className="mb-8 text-7xl">
+              Shopping for course materials made easy
+            </h1>
             <Button text="Sign Up" href="" />
           </div>
           <Image
             src="/placeholderparrot.jpg"
             width={750}
             height={500}
-            className=""
             alt="Parrot"
           />
+        </section>
+        <section>
+          <div className="flex justify-evenly">
+            <SquareCard />
+          </div>
         </section>
       </div>
     </main>
