@@ -15,7 +15,7 @@ export default function Button({
   bgColor = "bg-blue-800",
   bgHover = "bg-blue-400",
   border = "border-0",
-  borderColor = "border-black",
+  borderColor = bgColor,
   textColor = "text-white",
   href,
   onClick,
@@ -23,7 +23,7 @@ export default function Button({
   const buttonContent = (
     <button
       onClick={onClick}
-      className={`${bgColor} ${textColor} ${border} ${borderColor} flex h-10 min-w-20 items-center justify-center rounded-xl px-4 text-sm hover:${bgHover} transition`}
+      className={`${bgColor} ${textColor} ${border} ${borderColor} flex h-12 items-center justify-center rounded-xl px-5 text-base hover:${bgHover} transition`}
     >
       {text}
     </button>

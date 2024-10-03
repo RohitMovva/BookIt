@@ -6,7 +6,7 @@ import SquareCard from "./ui/square-card";
 
 export default function Page() {
   return (
-    <main>
+    <div className="grid gap-y-20 md:gap-y-40">
       <header>
         <ul className="flex h-16 justify-between p-10">
           <div className="flex h-full items-center space-x-4">
@@ -25,6 +25,7 @@ export default function Page() {
               <Button
                 text="Log In"
                 border="border"
+                borderColor="border-black"
                 bgColor="bg-white"
                 bgHover="bg-gray-300"
                 textColor="text-black"
@@ -33,8 +34,8 @@ export default function Page() {
           </div>
         </ul>
       </header>
-      <div className="mx-52">
-        <section className="my-28 flex items-center justify-between space-x-10">
+      <div className="mx-12 grid gap-y-20 md:gap-y-40 lg:mx-56">
+        <section className="flex items-center justify-between space-x-10">
           <div>
             <h1 className="mb-8 text-7xl">
               Shopping for course materials made easy
@@ -48,12 +49,27 @@ export default function Page() {
             alt="Parrot"
           />
         </section>
-        <section>
-          <div className="flex justify-evenly">
+        <section className="grid gap-y-16">
+          <h2 className="text-center text-6xl">
+            Buy and Sell Within Your Community
+          </h2>
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <SquareCard />
+            <SquareCard />
+            <SquareCard />
+          </div>
+        </section>
+        <section className="grid gap-y-16">
+          <h2 className="text-center text-6xl">
+            Buy and Sell Within Your Community
+          </h2>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <SquareCard />
+            <SquareCard />
             <SquareCard />
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }
