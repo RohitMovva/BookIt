@@ -19,7 +19,7 @@ export default function Page() {
           </div>
           <div className="flex h-full items-center space-x-4">
             <li>
-              <Button text="Sign Up" href="" />
+              <Button text="Sign Up" href="/databasetest" />
             </li>
             <li>
               <Button
@@ -27,15 +27,14 @@ export default function Page() {
                 border="border"
                 borderColor="border-black"
                 bgColor="bg-white"
-                bgHover="bg-gray-300"
                 textColor="text-black"
               />
             </li>
           </div>
         </ul>
       </header>
-      <div className="mx-12 grid gap-y-20 md:gap-y-40 lg:mx-56">
-        <section className="flex items-center justify-between space-x-10">
+      <div className="mx-12 grid gap-y-20 md:mx-40 lg:gap-y-40 xl:mx-56">
+        <section className="grid grid-cols-1 items-center justify-between gap-10 lg:grid-cols-2">
           <div>
             <h1 className="mb-8 text-7xl">
               Shopping for course materials made easy
@@ -50,25 +49,25 @@ export default function Page() {
           />
         </section>
         <section className="grid gap-y-16">
-          <h2 className="text-center text-6xl">
+          <h2 className="text-center text-5xl">
             Buy and Sell Within Your Community
           </h2>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <SquareCard />
-            <SquareCard />
-            <SquareCard />
+            <SquareCard
+              header="Save Time"
+              text="Spend less time searching for required course materials online."
+            />
+            <SquareCard
+              header="Save money"
+              text="Lower prices with no shipping costs. A convenient solution to a common problem."
+            />
+            <SquareCard
+              header="It's eco-friendly"
+              text="Reuse course materials with no need for shipping."
+            />
           </div>
         </section>
-        <section className="grid gap-y-16">
-          <h2 className="text-center text-6xl">
-            Buy and Sell Within Your Community
-          </h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <SquareCard />
-            <SquareCard />
-            <SquareCard />
-          </div>
-        </section>
+        <section></section>
       </div>
     </div>
   );
