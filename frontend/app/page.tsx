@@ -1,8 +1,9 @@
 "use client";
+import Image from "next/image";
 import TempLogo from "./ui/temp-logo";
 import Button from "./ui/button";
-import Image from "next/image";
 import SquareCard from "./ui/square-card";
+import TwoColTextLeft from "./ui/two-col-text-left";
 
 export default function Page() {
   return (
@@ -33,8 +34,8 @@ export default function Page() {
           </div>
         </ul>
       </header>
-      <div className="mx-12 grid gap-y-20 md:mx-40 lg:gap-y-40 xl:mx-56">
-        <section className="grid grid-cols-1 items-center justify-between gap-10 lg:grid-cols-2">
+      <div className="mx-12 grid gap-x-5 gap-y-20 md:mx-40 lg:gap-y-40 xl:mx-56">
+        <section className="grid items-center justify-between gap-10 lg:grid-cols-2">
           <div>
             <h1 className="mb-8 text-7xl">
               Shopping for course materials made easy
@@ -48,7 +49,7 @@ export default function Page() {
             alt="Parrot"
           />
         </section>
-        <section className="grid gap-y-16">
+        <section className="grid gap-y-20">
           <h2 className="text-center text-5xl">
             Buy and Sell Within Your Community
           </h2>
@@ -67,7 +68,21 @@ export default function Page() {
             />
           </div>
         </section>
-        <section></section>
+        <section className="grid gap-y-20">
+          <h2 className="text-center text-5xl">Features</h2>
+          <TwoColTextLeft
+            header="Robust search and filter"
+            text="Use our intelligent search to find by title, class or more! In additon, filter based on numerous options to find what you need."
+          />
+          <TwoColTextLeft
+            header="Quickly create listings"
+            text="Add images, tags, location, and more! Easily make your listing accessible to people interested."
+          />
+          <TwoColTextLeft
+            header="Save listings for later"
+            text="Easily bookmark listings for future reference. Never lose track of a material you need!"
+          />
+        </section>
       </div>
     </div>
   );
