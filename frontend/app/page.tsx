@@ -6,14 +6,14 @@ import SquareCard from "./ui/square-card";
 import TwoColTextLeft from "./ui/two-col-text-left";
 import CollapsibleComponent from "./ui/collapsible";
 
-export default function Page() {
+export default function Hero() {
   const intraSectiongapy = "grid gap-y-20";
   return (
-    <div className="grid gap-y-20 lg:gap-y-40">
+    <div className="grid gap-y-20 text-pretty lg:gap-y-40">
       {/* Fixed header */}
       <header className="sticky top-0 z-10 w-full border-b border-blue-100 bg-white">
         <ul className="flex h-16 justify-between p-10">
-          <div className="flex h-full items-center space-x-4">
+          <div className="flex h-full items-center space-x-5">
             <li>
               <TempLogo />
             </li>
@@ -21,7 +21,7 @@ export default function Page() {
               <p className="text-3xl">bookit</p>
             </li>
           </div>
-          <div className="flex h-full items-center space-x-4">
+          <div className="flex h-full items-center space-x-5">
             <li>
               <Button text="Sign Up" href="/databasetest" />
             </li>
@@ -58,7 +58,7 @@ export default function Page() {
           <h2 className="text-center text-5xl">
             Buy and Sell Within Your Community
           </h2>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <SquareCard
               header="Save Time"
               text="Spend less time searching for required course materials online."
@@ -104,7 +104,7 @@ export default function Page() {
               text="After you have taken a class, you can sell the textbook to a student a grade below you. You can also sell uniforms that don't fit anymore, or any school supplies that you dont use."
             />
             <CollapsibleComponent
-              header="Does bookit support my school?"
+              header="Does my school have bookit?"
               text="Right now, bookit is only for Peak to Peak Charter school. However, we are hoping to expand in the future."
             />
             <CollapsibleComponent

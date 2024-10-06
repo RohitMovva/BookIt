@@ -14,7 +14,7 @@ export default function TwoColTextLeft({
   alt = "",
 }: props) {
   const leftSide = (
-    <article className="grid content-center p-5">
+    <article className="grid content-center p-4">
       <h3 className="mb-5 text-4xl">{header}</h3>
       <p>{text}</p>
     </article>

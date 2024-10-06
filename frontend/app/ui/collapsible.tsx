@@ -40,7 +40,7 @@ export default function CollapsibleComponent({
       >
         <h1 className="text-xl">{header}</h1>
         <span
-          className={`transform select-none text-2xl font-bold transition-transform duration-200 ${
+          className={`transform select-none text-3xl font-extrabold leading-7 text-blue-800 transition-transform duration-200 ${
             isOpen ? "rotate-45" : "rotate-0"
           }`}
         >
@@ -49,7 +49,7 @@ export default function CollapsibleComponent({
       </div>
       <div
         ref={contentRef}
-        className={`overflow-hidden rounded-b bg-gray-100 pr-5 transition-[height] duration-200`}
+        className={`overflow-hidden rounded-b bg-gray-100 pr-4 transition-[height] duration-200`}
         style={{ height: isOpen ? contentHeight : "0px" }}
       >
         <div className="p-4">
