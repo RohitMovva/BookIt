@@ -15,7 +15,7 @@ export default function SquareCard({
   alt = "",
   header = "Square Card",
   text = "Description text",
-  bgColor = "bg-[#f1f4f9]",
+  bgColor = "bg-blue-50",
   headerColor = "text-black",
   textColor = "text-black",
 }: CardProps) {

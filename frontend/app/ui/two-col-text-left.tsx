@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ImageComponent from "./image";
 
 interface props {
   header?: string;
@@ -14,21 +14,15 @@ export default function TwoColTextLeft({
   alt = "",
 }: props) {
   const leftSide = (
-    <article className="grid place-content-center p-5">
+    <article className="grid content-center p-5">
       <h3 className="mb-5 text-4xl">{header}</h3>
-      <p className="">{text}</p>
+      <p>{text}</p>
     </article>
   );
   return (
     <section className="grid gap-4 rounded-xl lg:grid-cols-2">
       {leftSide}
-      <Image
-        className="place-self-center justify-self-center rounded-xl"
-        src={img}
-        width={750}
-        height={500}
-        alt={alt}
-      />
+      <ImageComponent />
     </section>
   );
 }
