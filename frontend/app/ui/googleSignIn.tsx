@@ -1,31 +1,39 @@
-// components/GoogleSignIn.tsx
-"use client";
+"use client"; // This ensures the component runs on the client side
 
 import { useEffect } from "react";
 
 const GoogleSignIn = () => {
+  // Define the callback function
+  const test = (response: any) => {
+    console.log("Google Sign-In Response:", response);
+    // Handle the sign-in response here
+  };
+
   useEffect(() => {
+    // Ensure the function is attached to the window object
+    (window as any).test = test; // Type assertion to avoid TypeScript errors
+
+    // Load the Google API script
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
-
-    // Append the script to the body
     document.body.appendChild(script);
 
-    // Clean up by removing the script when the component unmounts
+    // Cleanup function to remove the global reference
     return () => {
-      document.body.removeChild(script);
+      delete (window as any).test;
+      document.body.removeChild(script); // Clean up the script on unmount
     };
   }, []);
 
   return (
-    <div>
+    <>
       <div
         id="g_id_onload"
         data-client_id="181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
         data-context="signin"
         data-ux_mode="popup"
-        data-login_uri="/home"
+        data-callback="test"
         data-auto_prompt="false"
       ></div>
 
@@ -38,7 +46,7 @@ const GoogleSignIn = () => {
         data-size="large"
         data-logo_alignment="left"
       ></div>
-    </div>
+    </>
   );
 };
 
