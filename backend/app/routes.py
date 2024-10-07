@@ -32,6 +32,19 @@ def get_items():
     items_list = [{"id": item.id, "name": item.name} for item in items]
     return jsonify({"items": items_list}), 200  # Return data in a consistent structure
 
+@bp.route('/credentials', methods=['POST'])
+def add_credentials():
+    data = request.json
+    # name = data.get('name')
+    print("Adding item: ", data)
+    # if not name:
+    #     return jsonify({"error": "Name is required"}), 400
+    
+    # item = Item(name=name)
+    # db.session.add(item)
+    # db.session.commit()
+    return jsonify({"message": "Credentials goog", "credentials": {"id": "HALLO"}}), 201
+
 @bp.route('/test', methods=['GET'])
 def test_endpoint():
     return jsonify({"message": "Hello, World!"}), 200

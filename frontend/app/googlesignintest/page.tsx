@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 // Define the type for the Google Sign-In response
 interface GoogleSignInResponse {
@@ -8,6 +9,11 @@ interface GoogleSignInResponse {
 }
 
 export default function Page() {
+  const [message, setMessage] = useState<string>("");
+  // const [items, setItems] = useState<Item[]>([]);
+  const [newItem, setNewItem] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  console.log("WTF")
   useEffect(() => {
     // Create the Google Sign-In script
     const script = document.createElement("script");
@@ -16,14 +22,28 @@ export default function Page() {
 
     // Append the script to the document body
     document.body.appendChild(script);
-
+    console.log("OH YEAH")
     // Cleanup: Remove the script when the component unmounts
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
+  const sendCredentials = (response: GoogleSignInResponse) => {
+    axios
+      .post("http://127.0.0.1:5000/credentials", { name: response })
+      .then((response) => {
+        // setItems((prevItems) => [...prevItems, response.data.item]);
+        // setNewItem("");
+      })
+      .catch((error) => {
+        console.error("Error adding item:", error);
+        setError("Error adding new item.");
+      });
+  };
+
   useEffect(() => {
+    console.log("HALLO")
     // Initialize the Google Sign-In after the script is loaded
     const initializeGoogleSignIn = () => {
       if (window.google) {
@@ -33,6 +53,7 @@ export default function Page() {
           callback: (response: GoogleSignInResponse) => {
             // Handle the response here
             console.log("Sign-in response:", response);
+            sendCredentials(response);
           },
         });
       }
