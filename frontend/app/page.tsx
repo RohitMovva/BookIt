@@ -1,42 +1,18 @@
 "use client";
 import ImageComponent from "./ui/image";
 import TempLogo from "./ui/temp-logo";
-import Button from "./ui/button";
-import SquareCard from "./ui/square-card";
-import TwoColTextLeft from "./ui/two-col-text-left";
-import CollapsibleComponent from "./ui/collapsible";
+import Button from "./ui/hero/button";
+import SquareCard from "./ui/hero/square-card";
+import TwoColTextLeft from "./ui/hero/two-col-text-left";
+import CollapsibleComponent from "./ui/hero/collapsible";
+import Header from "./ui/hero/header";
 
 export default function Hero() {
   const intraSectiongapy = "grid gap-y-20";
   return (
     <div className="grid gap-y-20 text-pretty lg:gap-y-40">
       {/* Fixed header */}
-      <header className="sticky top-0 z-10 w-full border-b border-blue-100 bg-white">
-        <ul className="flex h-16 justify-between p-10">
-          <div className="flex h-full items-center space-x-5">
-            <li>
-              <TempLogo />
-            </li>
-            <li>
-              <p className="text-3xl">bookit</p>
-            </li>
-          </div>
-          <div className="flex h-full items-center space-x-5">
-            <li>
-              <Button text="Sign Up" href="/databasetest" />
-            </li>
-            <li>
-              <Button
-                text="Log In"
-                border="border"
-                borderColor="border-black"
-                bgColor="bg-white"
-                textColor="text-black"
-              />
-            </li>
-          </div>
-        </ul>
-      </header>
+      <Header />
       {/* Main content */}
       <div
         className={`${intraSectiongapy} mx-12 md:mx-40 lg:mx-20 lg:gap-y-40 2xl:mx-56`}
@@ -104,12 +80,12 @@ export default function Hero() {
               text="After you have taken a class, you can sell the textbook to a student a grade below you. You can also sell uniforms that don't fit anymore, or any school supplies that you dont use."
             />
             <CollapsibleComponent
-              header="Does my school have bookit?"
-              text="Right now, bookit is only for Peak to Peak Charter school. However, we are hoping to expand in the future."
-            />
-            <CollapsibleComponent
               header="Where do I meet to buy or sell course materials?"
               text="Typically the purchaser and seller meet on school grounds. This is convenient and safe for both parties."
+            />
+            <CollapsibleComponent
+              header="Does my school have bookit?"
+              text="Right now, bookit is only for Peak to Peak Charter school. However, we are hoping to expand in the future."
             />
           </div>
         </section>

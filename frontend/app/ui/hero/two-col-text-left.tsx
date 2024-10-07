@@ -1,4 +1,4 @@
-import ImageComponent from "./image";
+import ImageComponent from "../image";
 
 interface props {
   header?: string;
