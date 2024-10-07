@@ -1,5 +1,6 @@
 import TempLogo from "../temp-logo";
 import Button from "../hero/button";
+import GoogleSignIn from "../googleSignIn";
 
 export default function Header() {
   return (
@@ -25,6 +26,7 @@ export default function Header() {
               bgColor="bg-white"
               textColor="text-black"
             />
+            <GoogleSignIn />
           </li>
         </div>
       </ul>
