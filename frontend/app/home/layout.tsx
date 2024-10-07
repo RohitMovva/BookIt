@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import TempLogo from "../ui/temp-logo";
 import Button from "../ui/hero/button";

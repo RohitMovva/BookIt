@@ -19,7 +19,7 @@ export default function SidebarItem({
   return (
     <Link
       href={href}
-      className="grid transform place-items-center gap-2 m-4 text-xs transition-all duration-300 hover:-translate-y-1"
+      className="m-4 grid transform place-items-center gap-2 text-xs transition-all duration-300 hover:-translate-y-1"
     >
       <div
         className={`rounded-full px-3.5 py-2 ${pathname === href ? "bg-blue-50" : ""}`}
