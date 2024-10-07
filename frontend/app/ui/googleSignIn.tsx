@@ -1,12 +1,33 @@
 "use client"; // This ensures the component runs on the client side
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+// Define the type for the Google Sign-In response
+interface GoogleSignInResponse {
+  credential: string; // or any other properties you expect
+}
 
 const GoogleSignIn = () => {
+  const [error, setError] = useState<string | null>(null);
   // Define the callback function
   const test = (response: any) => {
     console.log("Google Sign-In Response:", response);
+    sendCredentials(response);
     // Handle the sign-in response here
+  };
+
+  const sendCredentials = (response: GoogleSignInResponse) => {
+    axios
+      .post("http://127.0.0.1:5000/credentials", { name: response })
+      .then((response) => {
+        // setItems((prevItems) => [...prevItems, response.data.item]);
+        // setNewItem("");
+      })
+      .catch((error) => {
+        console.error("Error adding item:", error);
+        setError("Error adding new item.");
+      });
   };
 
   useEffect(() => {
