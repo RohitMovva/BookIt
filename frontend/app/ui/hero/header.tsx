@@ -38,7 +38,7 @@ export default function Header() {
               bgColor="bg-white"
               textColor="text-black"
             />
-            <GoogleSignUp />
+            {/* <GoogleSignUp /> */}
           </li>
         </div>
       </ul>

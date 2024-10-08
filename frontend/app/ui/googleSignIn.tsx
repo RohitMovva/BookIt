@@ -24,7 +24,7 @@ const GoogleLogin: React.FC = () => {
     try {
       const loginResponse = await axios.post("http://127.0.0.1:5000/login", {
         credential: response.credential
-      });
+      }); 
       setUser(loginResponse.data.user);
       setError(null);
     } catch (error) {

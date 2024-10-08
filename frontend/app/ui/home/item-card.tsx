@@ -1,0 +1,2 @@
+import ImageComponent from "../image";
+
