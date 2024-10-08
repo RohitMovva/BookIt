@@ -14,6 +14,9 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+    # with app.app_context():
+    #     # This will create all tables
+    #     db.create_all()
     migrate.init_app(app, db)
 
     from app import routes
