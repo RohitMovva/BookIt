@@ -4,10 +4,11 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import TempLogo from "../ui/temp-logo";
-import useIsMediumScreen from "../lib/hooks";
 import SidebarItem from "../ui/home/sidebar-item";
 import Search from "../ui/home/search";
 import { fetchUserProfilePicture } from "../lib/data";
+import Button from "../ui/button";
+import DropdownButton from "../ui/button-dropdown";
 
 export default function Layout(
   { children }: { children: React.ReactNode },
@@ -21,19 +22,14 @@ export default function Layout(
   },
 ) {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen(!isOpen);
-  const isMediumScreen = useIsMediumScreen();
-  const [isOpen, setIsOpen] = useState(isMediumScreen);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
     null,
   );
 
   const arr = pathname.split("/");
   const searchDefault = "Search " + arr[arr.length - 1];
-
-  useEffect(() => {
-    setIsOpen(isMediumScreen);
-  }, [isMediumScreen]);
 
   useEffect(() => {
     const loadProfilePicture = async () => {
@@ -54,17 +50,6 @@ export default function Layout(
       {/* Top bar */}
       <nav className="sticky top-0 z-10 grid h-20 w-full items-center border-b border-blue-100 bg-white">
         <ul className="flex h-16 justify-between px-6 md:px-10">
-          {/* Toggle button for mobile view */}
-          {!isMediumScreen && (
-            <Image
-              src="/hamburger.png"
-              alt="Hamburger menu icon"
-              width={24}
-              height={24}
-              className="flex cursor-pointer place-self-center md:hidden"
-              onClick={toggleSidebar}
-            />
-          )}
           <div className="flex h-full items-center space-x-5">
             <li>
               <TempLogo />
@@ -98,15 +83,9 @@ export default function Layout(
         </ul>
       </nav>
       <div className="flex">
-        {/* Sidebar */}
+        {/* Sidebar/Bottom (need to implement) bar */}
         <div
-          className={`fixed inset-0 left-0 top-0 z-30 bg-black/50 transition-all duration-300 ${isOpen ? "left-24 translate-x-0" : "-translate-x-full"} md:left-0 md:-translate-x-full`}
-          onClick={handleSidebarClick}
-        ></div>
-        <div
-          className={`fixed top-0 z-30 h-screen w-1/2 transform flex-col border-blue-100 bg-white text-black transition-all duration-300 md:top-20 md:h-[calc(100vh-5rem)] md:w-24 md:border-r ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          } md:sticky md:translate-x-0`}
+          className={`fixed top-0 z-30 hidden h-screen w-1/2 transform flex-col border-blue-100 bg-white text-black transition-all duration-300 md:sticky md:top-20 md:block md:h-[calc(100vh-5rem)] md:w-24 md:translate-x-0 md:border-r`}
         >
           {/* Sidebar items */}
           <nav className="grid h-full place-content-center gap-4 md:mt-4 md:h-fit">
@@ -133,9 +112,39 @@ export default function Layout(
             />
           </nav>
         </div>
+        {/* Collapsable Filter Section */}
+        {/* Overlay */}
+        <div
+          className={`fixed inset-0 left-0 top-0 z-30 bg-black/50 transition-all duration-300 md:pointer-events-none ${isOpen ? "opacity-100" : "pointer-events-none opacity-0"} md:opacity-0`}
+          onClick={handleSidebarClick}
+        ></div>
+        {/* Collapsable */}
+        <div
+          className={`fixed left-0 top-0 z-40 h-screen max-w-0 transform flex-col overflow-hidden border-blue-100 bg-white text-black transition-all duration-300 md:static md:z-20 md:h-[calc(100vh-5rem)] md:border-r ${
+            isOpen
+              ? "w-1/2 max-w-full translate-x-0 md:left-24 md:w-fit"
+              : "-translate-x-full"
+          }`}
+        >
+          {/* Filters */}
+          <section className="grid h-full place-content-center gap-4 md:mt-4 md:h-fit p-6">
+            <DropdownButton
+              text="Menu"
+              options={[
+                { label: "Profile", href: "/profile" },
+                { label: "Settings", href: "/settings" },
+                {
+                  label: "Logout",
+                  onClick: () => console.log("Logging out..."),
+                },
+              ]}
+            />
+          </section>
+        </div>
         {/* Content */}
-        <div className="flex-grow space-y-6 p-6 md:p-12">
+        <div className="flex-grow space-y-6 mt-4 mx-6 xl:mx-12 2xl:mx-24">
           <Search placeholder={searchDefault} />
+          <Button text="Filters" onClick={toggleSidebar} />
           {children}
         </div>
       </div>

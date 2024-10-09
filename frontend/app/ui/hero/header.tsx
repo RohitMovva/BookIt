@@ -1,5 +1,5 @@
 import TempLogo from "../temp-logo";
-import Button from "../hero/button";
+import Button from "../button";
 
 export default function Header() {
   return (
@@ -15,10 +15,7 @@ export default function Header() {
         </div>
         <div className="flex h-full items-center space-x-5">
           <li>
-            <Button
-              text="Sign Up"
-              href="/signup"
-            />
+            <Button text="Sign Up" href="/signup" />
           </li>
           <li>
             <Button
