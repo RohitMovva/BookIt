@@ -17,23 +17,17 @@ export default function Header() {
         <div className="flex h-full items-center space-x-5">
           <li>
             <Button
+              text="Sign Up"
+            />
+          </li>
+          <li>
+            <Button
               text="Log In"
               border="border"
               borderColor="border-black"
               bgColor="bg-white"
               textColor="text-black"
             />
-            <GoogleAuth mode="signin" />
-          </li>
-          <li>
-            <Button
-              text="Sign Up"
-              border="border"
-              borderColor="border-black"
-              bgColor="bg-white"
-              textColor="text-black"
-            />
-            <GoogleAuth mode="signup" />
           </li>
         </div>
       </ul>
