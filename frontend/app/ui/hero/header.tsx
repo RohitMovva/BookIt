@@ -1,7 +1,6 @@
 import TempLogo from "../temp-logo";
 import Button from "../hero/button";
-import GoogleSignIn from "../googleSignIn";
-import GoogleSignUp from "../googleSignUp";
+import GoogleAuth from "../googleAuth";
 
 export default function Header() {
   return (
@@ -16,9 +15,6 @@ export default function Header() {
           </li>
         </div>
         <div className="flex h-full items-center space-x-5">
-          {/* <li>
-            <Button text="Sign Up" href="/databasetest" />
-          </li> */}
           <li>
             <Button
               text="Log In"
@@ -27,9 +23,8 @@ export default function Header() {
               bgColor="bg-white"
               textColor="text-black"
             />
-            <GoogleSignIn />
+            <GoogleAuth mode="signin" />
           </li>
-          <br></br>
           <li>
             <Button
               text="Sign Up"
@@ -38,7 +33,7 @@ export default function Header() {
               bgColor="bg-white"
               textColor="text-black"
             />
-            <GoogleSignUp />
+            <GoogleAuth mode="signup" />
           </li>
         </div>
       </ul>

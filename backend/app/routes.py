@@ -39,88 +39,62 @@ CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleuserconten
 #     return jsonify({"items": items_list}), 200  # Return data in a consistent structure
 
 
-@bp.route('/login', methods=['POST'])
-def login():
+
+@bp.route('/signin', methods=['POST'])
+def signin():
     data = request.json
-    print("Received login data: ", data)
-    
     try:
-        # Verify the token
         idinfo = id_token.verify_oauth2_token(data['credential'], requests.Request(), CLIENT_ID)
         
-        # Check if the email is verified
         if idinfo['email_verified']:
-            google_id = idinfo['sub']
-            email = idinfo['email']
-            
-            # Check if user exists
-            user = User.query.filter_by(google_id=google_id).first()
+            user = User.query.filter_by(google_id=idinfo['sub']).first()
             if user:
-                return jsonify({
-                    "message": "Login successful",
-                    "user": {
-                        "id": user.id,
-                        "email": user.email,
-                        "name": user.name,
-                        "username": user.username,
-                        "picture": user.picture
-                    }
-                }), 200
+                return jsonify({"message": "Sign-in successful", "user": user.to_dict()}), 200
             else:
-                return jsonify({"error": "User not found. Please sign up."}), 404
+                return jsonify({"error": "User not found"}), 404
         else:
             return jsonify({"error": "Email not verified"}), 400
-    
-    except ValueError as e:
-        # Invalid token
-        print("Token verification failed:", str(e))
+    except ValueError:
         return jsonify({"error": "Invalid token"}), 400
-
 
 @bp.route('/signup', methods=['POST'])
 def signup():
     data = request.json
-    print("Received signup data: ", data)
-    
     try:
-        # Verify the token
         idinfo = id_token.verify_oauth2_token(data['credential'], requests.Request(), CLIENT_ID)
         
-        # Check if the email is verified
         if idinfo['email_verified']:
-            google_id = idinfo['sub']
-            email = idinfo['email']
-            name = idinfo['name']
-            picture = idinfo.get('picture')
-            username = data['username']
-            
-            # Check if user already exists
-            existing_user = User.query.filter((User.google_id == google_id) | (User.email == email)).first()
+            existing_user = User.query.filter_by(google_id=idinfo['sub']).first()
             if existing_user:
                 return jsonify({"error": "User already exists"}), 400
             
-            # Create new user
-            new_user = User(google_id=google_id, email=email, name=name, picture=picture, username=username)
+            new_user = User(
+                google_id=idinfo['sub'],
+                email=idinfo['email'],
+                name=idinfo['name'],
+                picture=idinfo.get('picture')
+            )
             db.session.add(new_user)
             db.session.commit()
-            
-            return jsonify({
-                "message": "User created successfully",
-                "user": {
-                    "id": new_user.id,
-                    "email": new_user.email,
-                    "name": new_user.name,
-                    "username": new_user.username,
-                    "picture": new_user.picture
-                }
-            }), 201
+            return jsonify({"message": "Google authentication successful", "user": new_user.to_dict()}), 200
         else:
             return jsonify({"error": "Email not verified"}), 400
-    
-    except ValueError as e:
-        # Invalid token
-        print("Token verification failed:", str(e))
+    except ValueError:
         return jsonify({"error": "Invalid token"}), 400
+
+@bp.route('/complete-signup', methods=['POST'])
+def complete_signup():
+    data = request.json
+    user = User.query.filter_by(google_id=data['google_id']).first()
+    if user:
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({"error": "Username already taken"}), 400
+        user.username = data['username']
+        db.session.commit()
+        return jsonify({"message": "Signup completed", "user": user.to_dict()}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
 @bp.route('/test', methods=['GET'])
 def test_endpoint():
     return jsonify({"message": "Hello, World!"}), 200

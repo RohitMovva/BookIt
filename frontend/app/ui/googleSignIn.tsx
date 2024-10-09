@@ -15,11 +15,15 @@ interface User {
   picture: string;
 }
 
-const GoogleLogin: React.FC = () => {
+interface Props {
+  buttonId: string;
+}
+
+const GoogleSignIn: React.FC<Props> = ({ buttonId }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCredentialResponse = async (response: GoogleSignInResponse) => {
+  const handleSignInResponse = async (response: GoogleSignInResponse) => {
     console.log("Google Sign-In Response:", response);
     try {
       const loginResponse = await axios.post("http://127.0.0.1:5000/login", {
@@ -34,7 +38,8 @@ const GoogleLogin: React.FC = () => {
   };
 
   useEffect(() => {
-    (window as any).handleCredentialResponse = handleCredentialResponse;
+    const callbackName = `handle${buttonId}Response`;
+    (window as any)[callbackName] = handleSignInResponse;
 
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
@@ -42,21 +47,20 @@ const GoogleLogin: React.FC = () => {
     document.body.appendChild(script);
 
     return () => {
-      delete (window as any).handleCredentialResponse;
+      delete (window as any)[callbackName];
       document.body.removeChild(script);
     };
-  }, []);
+  }, [buttonId]);
 
   return (
     <div>
-      <h2>Login</h2>
       {!user && (
         <div
-          id="g_id_onload"
+          id={`${buttonId}_onload`}
           data-client_id="181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
           data-context="signin"
           data-ux_mode="popup"
-          data-callback="handleCredentialResponse"
+          data-callback={`handle${buttonId}Response`}
           data-auto_prompt="false"
         ></div>
       )}
@@ -86,4 +90,4 @@ const GoogleLogin: React.FC = () => {
   );
 };
 
-export default GoogleLogin;
+export default GoogleSignIn;
