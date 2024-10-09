@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { fetchFilteredListings } from "../../lib/data";
@@ -10,6 +10,7 @@ import ImageComponent from "../image";
 export default function ListingGallery() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false); // State for tooltip visibility
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -25,7 +26,6 @@ export default function ListingGallery() {
   const openListing = (listing: Listing) => setSelectedListing(listing);
   const closeListing = () => setSelectedListing(null);
 
-  // Handle clicks outside of the Listing to close it
   const handleListingClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       closeListing();
@@ -34,23 +34,33 @@ export default function ListingGallery() {
 
   const toggleSaved = (uuid: string) => {
     console.log(`Saved toggled for UUID: ${uuid}`);
-    // Here you can add the logic to handle the Saved action
   };
+
+  const handleCopyLink = useCallback((uuid: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/listing/${uuid}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setTooltipVisible(true); // Show the tooltip
+      setTimeout(() => setTooltipVisible(false), 2000); // Hide it after 2 seconds
+    });
+  }, []);
 
   return (
     <>
-      {/* Responsive Grid for Listings */}
+      {tooltipVisible && (
+        <p className="fixed bottom-12 left-12 z-30 transform rounded bg-blue-800 p-3 pr-12 text-center text-white">
+          Link copied!
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {/* Listing */}
         {listings.map((listing) => (
           <article
             key={listing.uuid}
-            className="relative cursor-pointer rounded-xl transition-all duration-300 hover:-translate-y-1"
+            className="relative cursor-pointer rounded-xl"
             onClick={() => openListing(listing)}
           >
             <ImageComponent />
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black"></div>
-            {/* Content */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
                 <h2 className="text-2xl">{listing.title}</h2>
@@ -60,34 +70,45 @@ export default function ListingGallery() {
               </div>
               <div className="grid grid-cols-2 items-center">
                 <p className="text-3xl">${listing.price}</p>
-                <Image
-                  src={
-                    listing.saved
-                      ? "/bookmark-filled.png"
-                      : "/bookmark-white.png"
-                  }
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="cursor-pointer justify-self-end transition-all duration-300 hover:-translate-y-1"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSaved(listing.uuid);
-                  }}
-                />
+                <div className="flex place-items-center space-x-2 justify-self-end">
+                  <div
+                    onClick={(e) => handleCopyLink(listing.uuid, e)}
+                    className="relative cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Image
+                      src="/share-white.png"
+                      alt="Share"
+                      width={28}
+                      height={28}
+                    />
+                  </div>
+                  <Image
+                    src={
+                      listing.saved
+                        ? "/bookmark-filled.png"
+                        : "/bookmark-white.png"
+                    }
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSaved(listing.uuid);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </article>
         ))}
       </div>
-      {/* Popup Listing */}
       {selectedListing && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
           onClick={handleListingClick}
         >
           <div className="relative flex h-5/6 w-11/12 max-w-4xl rounded-lg bg-white shadow-lg">
-            {/* Left Side: Images */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
               <img
                 src={selectedListing.thumbnail}
@@ -103,7 +124,6 @@ export default function ListingGallery() {
                 />
               ))}
             </div>
-            {/* Right Side: Listing Details */}
             <div className="w-1/2 overflow-y-auto p-6">
               <h2 className="mb-2 text-2xl font-semibold">
                 {selectedListing.title}

@@ -7,6 +7,7 @@ interface sidebarItemProps {
   text: string;
   href: string;
   pathname: string;
+  onClick: () => void;
 }
 
 export default function SidebarItem({
@@ -15,10 +16,12 @@ export default function SidebarItem({
   text,
   href,
   pathname,
+  onClick,
 }: sidebarItemProps) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className="grid transform place-items-center gap-2 text-xs transition-all duration-300 hover:-translate-y-1"
     >
       <div

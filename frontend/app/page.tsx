@@ -24,7 +24,7 @@ export default function Hero() {
             <h1 className="mb-5 text-7xl">
               Shopping for course materials made easy
             </h1>
-            <Button text="Sign Up" href="" />
+            <Button text="Sign Up" href="/signup" />
           </div>
           <ImageComponent />
         </section>

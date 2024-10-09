@@ -59,3 +59,8 @@ export async function fetchFilteredListings(
 export async function fetchListingsPages(query: string) {
   return 2;
 }
+
+// idk if we want this or just a getUserInfo() function would be enough
+export async function fetchUserProfilePicture() {
+  return "/user.png";
+}
