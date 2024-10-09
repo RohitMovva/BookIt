@@ -100,16 +100,16 @@ export default function Layout(
       <div className="flex">
         {/* Sidebar */}
         <div
-          className={`fixed inset-0 top-0 left-0 z-30 bg-black/50 transition-all duration-300 ${isOpen ? "translate-x-0 left-24" : "-translate-x-full"} md:-translate-x-full`}
+          className={`fixed inset-0 left-0 top-0 z-30 bg-black/50 transition-all duration-300 ${isOpen ? "left-24 translate-x-0" : "-translate-x-full"} md:left-0 md:-translate-x-full`}
           onClick={handleSidebarClick}
         ></div>
         <div
-          className={`fixed top-0 z-30 h-screen w-24 transform flex-col border-blue-100 bg-white text-black transition-all duration-300 md:top-20 md:h-[calc(100vh-5rem)] md:border-r ${
+          className={`fixed top-0 z-30 h-screen w-1/2 transform flex-col border-blue-100 bg-white text-black transition-all duration-300 md:top-20 md:h-[calc(100vh-5rem)] md:w-24 md:border-r ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           } md:sticky md:translate-x-0`}
         >
           {/* Sidebar items */}
-          <nav className="mt-4 grid place-content-center gap-4">
+          <nav className="grid h-full place-content-center gap-4 md:mt-4 md:h-fit">
             <SidebarItem
               img="/search-interface-symbol.png"
               text="Search"
