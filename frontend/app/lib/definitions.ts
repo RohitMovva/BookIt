@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 // define data
 export enum Condition {
   Bad = "Bad",
@@ -18,6 +20,7 @@ export interface ContactInfo {
 }
 
 export interface Listing {
+  uuid: string;
   title: string;
   description: string;
   price: number;

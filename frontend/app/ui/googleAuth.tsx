@@ -9,7 +9,7 @@ interface GoogleUser {
 }
 
 interface Props {
-  mode: 'signin' | 'signup';
+  mode: "signin" | "signup";
 }
 
 const GoogleAuth: React.FC<Props> = ({ mode }) => {
@@ -27,13 +27,20 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
 
     script.onload = () => {
       window.google.accounts.id.initialize({
-        client_id: "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com",
-        callback: handleCredentialResponse
+        client_id:
+          "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
       });
 
       window.google.accounts.id.renderButton(
-        document.getElementById(mode === 'signin' ? "google-signin-button" : "google-signup-button"),
-        { theme: "outline", size: "large", text: mode === 'signin' ? "signin_with" : "signup_with" }
+        document.getElementById(
+          mode === "signin" ? "google-signin-button" : "google-signup-button",
+        ),
+        {
+          theme: "outline",
+          size: "large",
+          text: mode === "signin" ? "signin_with" : "signup_with",
+        },
       );
     };
 
@@ -45,8 +52,10 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
   const handleCredentialResponse = async (response: any) => {
     const idToken = response.credential;
     try {
-      const userResponse = await axios.post(`http://127.0.0.1:5000/${mode}`, { credential: idToken });
-      if (mode === 'signin') {
+      const userResponse = await axios.post(`http://127.0.0.1:5000/${mode}`, {
+        credential: idToken,
+      });
+      if (mode === "signin") {
         console.log("Sign-in successful:", userResponse.data);
         // Handle successful sign-in (e.g., update app state, redirect)
       } else {
@@ -67,10 +76,13 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/complete-signup", {
-        google_id: googleUser.google_id,  // Use google_id instead of sub
-        username: username
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:5000/complete-signup",
+        {
+          google_id: googleUser.sub, // Use google_id instead of sub
+          username: username,
+        },
+      );
       console.log("Signup successful:", response.data);
       // Handle successful signup (e.g., redirect to dashboard)
     } catch (error) {
@@ -82,10 +94,14 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
   return (
     <div>
       {!showUsernameForm && (
-        <div id={mode === 'signin' ? "google-signin-button" : "google-signup-button"}></div>
+        <div
+          id={
+            mode === "signin" ? "google-signin-button" : "google-signup-button"
+          }
+        ></div>
       )}
-      
-      {mode === 'signup' && showUsernameForm && (
+
+      {mode === "signup" && showUsernameForm && (
         <form onSubmit={handleSignUp}>
           <div>
             <label htmlFor="username">Username:</label>
@@ -101,7 +117,7 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
         </form>
       )}
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };
