@@ -85,30 +85,27 @@ export default function Layout(
       <div className="flex">
         {/* Sidebar/Bottom (need to implement) bar */}
         <div
-          className={`fixed top-0 z-30 hidden h-screen w-1/2 transform flex-col border-blue-100 bg-white text-black transition-all duration-300 md:sticky md:top-20 md:block md:h-[calc(100vh-5rem)] md:w-24 md:translate-x-0 md:border-r`}
+          className={`fixed bottom-0 z-30 h-24 w-screen transform border-t border-blue-100 bg-white text-black md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:w-24 md:flex-col md:border-r`}
         >
-          {/* Sidebar items */}
-          <nav className="grid h-full place-content-center gap-4 md:mt-4 md:h-fit">
+          {/* Side/bottombar items */}
+          <nav className="grid h-full grid-cols-3 place-content-center gap-4 md:mt-4 md:h-fit md:grid-cols-1">
             <SidebarItem
               img="/search-interface-symbol.png"
               text="Search"
               href="/home"
               pathname={pathname}
-              onClick={toggleSidebar}
             />
             <SidebarItem
               img="/bookmark.png"
               text="Saved"
               href="/home/saved"
               pathname={pathname}
-              onClick={toggleSidebar}
             />
             <SidebarItem
               img="/list.png"
               text="Listings"
               href="/home/listings"
               pathname={pathname}
-              onClick={toggleSidebar}
             />
           </nav>
         </div>
@@ -127,7 +124,7 @@ export default function Layout(
           }`}
         >
           {/* Filters */}
-          <section className="grid h-full place-content-center gap-4 md:mt-4 md:h-fit p-6">
+          <section className="grid h-full place-content-center gap-4 p-6 md:mt-4 md:h-fit">
             <DropdownButton
               text="Menu"
               options={[
@@ -142,7 +139,7 @@ export default function Layout(
           </section>
         </div>
         {/* Content */}
-        <div className="flex-grow space-y-6 mt-4 mx-6 xl:mx-12 2xl:mx-24">
+        <div className="mx-6 my-4 flex-grow space-y-6 pb-24 md:pb-0 xl:mx-12 2xl:mx-24">
           <Search placeholder={searchDefault} />
           <Button text="Filters" onClick={toggleSidebar} />
           {children}
