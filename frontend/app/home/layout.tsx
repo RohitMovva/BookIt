@@ -101,7 +101,7 @@ export default function Layout(
           </nav>
         </div>
         {/* Content */}
-        <div className="w-[calc(100vh-6rem)] flex-grow p-6 md:p-12">
+        <div className="flex-grow space-y-6 p-6 md:p-12">
           <Search placeholder={searchDefault} />
           {children}
         </div>

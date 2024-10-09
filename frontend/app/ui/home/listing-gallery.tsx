@@ -38,26 +38,28 @@ export default function ListingGallery() {
   };
 
   return (
-    <div>
+    <>
       {/* Responsive Grid for Listings */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {/* Listing */}
         {listings.map((listing) => (
           <article
-            key={listing.uuid} // Ensure you use a unique key for each listing
+            key={listing.uuid}
             className="relative cursor-pointer rounded-xl transition-all duration-300 hover:-translate-y-1"
             onClick={() => openListing(listing)}
           >
             <ImageComponent />
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-60% via-black/80 via-80% to-black"></div>
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black"></div>
+            {/* Content */}
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
-                <h2>{listing.title}</h2>
-                <p className="line-clamp-2 overflow-hidden text-ellipsis">
+                <h2 className="text-2xl">{listing.title}</h2>
+                <p className="text-s line-clamp-1 overflow-hidden text-ellipsis text-neutral-300">
                   {listing.description}
                 </p>
               </div>
-              <div className="grid grid-cols-2 px-4">
-                <p>${listing.price}</p>
+              <div className="grid grid-cols-2 items-center">
+                <p className="text-3xl">${listing.price}</p>
                 <Image
                   src={
                     listing.saved
@@ -126,6 +128,6 @@ export default function ListingGallery() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
