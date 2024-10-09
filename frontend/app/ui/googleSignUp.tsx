@@ -14,13 +14,17 @@ interface GoogleUser {
   picture: string;
 }
 
-const GoogleSignUp: React.FC = () => {
+interface Props {
+  buttonId: string;
+}
+
+const GoogleSignUp: React.FC<Props> = ({ buttonId }) => {
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null);
   const [credential, setCredential] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleCredentialResponse = (response: GoogleSignInResponse) => {
+  const handleSignUpResponse = (response: GoogleSignInResponse) => {
     console.log("Google Sign-In Response:", response);
     const decodedToken: GoogleUser = JSON.parse(atob(response.credential.split('.')[1]));
     setGoogleUser(decodedToken);
@@ -48,7 +52,8 @@ const GoogleSignUp: React.FC = () => {
   };
 
   useEffect(() => {
-    (window as any).handleCredentialResponse = handleCredentialResponse;
+    const callbackName = `handle${buttonId}Response`;
+    (window as any)[callbackName] = handleSignUpResponse;
 
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
@@ -56,20 +61,20 @@ const GoogleSignUp: React.FC = () => {
     document.body.appendChild(script);
 
     return () => {
-      delete (window as any).handleCredentialResponse;
+      delete (window as any)[callbackName];
       document.body.removeChild(script);
     };
-  }, []);
+  }, [buttonId]);
 
   return (
     <div>
       <h2>Sign Up</h2>
       <div
-        id="g_id_onload"
+        id={`${buttonId}_onload`}
         data-client_id="181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
         data-context="signup"
         data-ux_mode="popup"
-        data-callback="handleCredentialResponse"
+        data-callback={`handle${buttonId}Response`}
         data-auto_prompt="false"
       ></div>
       <div
