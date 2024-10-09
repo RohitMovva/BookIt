@@ -5,19 +5,32 @@ import TempLogo from "../ui/temp-logo";
 import Button from "../ui/hero/button";
 import useIsMediumScreen from "../lib/hooks";
 import SidebarItem from "../ui/home/sidebar-item";
+import Search from "../ui/home/search";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout(
+  { children }: { children: React.ReactNode },
+  {
+    searchParams,
+  }: {
+    searchParams?: {
+      query?: string;
+      page?: string;
+    };
+  },
+) {
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
   const pathname = usePathname();
   const toggleSidebar = () => setIsOpen(!isOpen);
   const isMediumScreen = useIsMediumScreen();
   const [isOpen, setIsOpen] = useState(isMediumScreen);
+  
+  var arr = pathname.split("/"); 
+  var searchDefault = "Search " + arr[arr.length - 1];
 
   useEffect(() => {
     setIsOpen(isMediumScreen);
   }, [isMediumScreen]);
-
-  const sidebarItemClasses =
-    "grid text-xs gap-2 transform place-items-center p-4 transition-all duration-300 hover:-translate-y-1"; // might just be able to do p
 
   return (
     <div className="scrollbar-track-white">
@@ -61,8 +74,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex">
         {/* Sidebar */}
         <div
-          className={`sticky top-20 h-[calc(100vh-5rem)] w-32 transform flex-col border-r border-blue-100 text-black transition-all duration-300 ${
-            isOpen ? "translate-x-0" : "-translate-x-32"
+          className={`sticky top-20 h-[calc(100vh-5rem)] w-24 transform flex-col border-r border-blue-100 text-black transition-all duration-300 ${
+            isOpen ? "translate-x-0" : "-translate-x-24"
           } md:translate-x-0`}
         >
           {/* Sidebar items */}
@@ -74,61 +87,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               pathname={pathname}
             />
             <SidebarItem
-              img="/search-interface-symbol.png"
+              img="/bookmark.png"
               text="Saved"
               href="/home/saved"
               pathname={pathname}
             />
             <SidebarItem
-              img="/search-interface-symbol.png"
+              img="/list.png"
               text="Listings"
               href="/home/listings"
               pathname={pathname}
             />
-            {/* <Link
-              href="/home"
-              className={`${sidebarItemClasses} ${
-                pathname === "/home"
-                  ? "font-bold text-blue-800"
-                  : "font-normal text-black"
-              }`}
-            >
-              <div
-                className={`rounded-full px-3.5 py-2 ${pathname === "/home" ? "bg-blue-50" : ""}`}
-              >
-                <Image
-                  src={"/search-interface-symbol.png"}
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-              </div>
-              <p>Search</p>
-            </Link>
-            <Link
-              href="/home/saved"
-              className={`${sidebarItemClasses} ${
-                pathname === "/home/saved"
-                  ? "font-bold text-blue-800"
-                  : "font-normal text-black"
-              }`}
-            >
-              Saved
-            </Link>
-            <Link
-              href="/home/listings"
-              className={`${sidebarItemClasses} ${
-                pathname === "/home/listings"
-                  ? "font-bold text-blue-800"
-                  : "font-normal text-black"
-              }`}
-            >
-              Listings
-            </Link> */}
           </nav>
         </div>
         {/* Content */}
         <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
+          <Search placeholder={searchDefault} />
           {children}
         </div>
       </div>
