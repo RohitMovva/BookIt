@@ -28,4 +28,5 @@ export interface Listing {
   thumbnail: string;
   images: string[];
   tags: ListingTags;
+  saved: boolean;
 }

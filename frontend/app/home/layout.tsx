@@ -24,8 +24,8 @@ export default function Layout(
   const toggleSidebar = () => setIsOpen(!isOpen);
   const isMediumScreen = useIsMediumScreen();
   const [isOpen, setIsOpen] = useState(isMediumScreen);
-  
-  var arr = pathname.split("/"); 
+
+  var arr = pathname.split("/");
   var searchDefault = "Search " + arr[arr.length - 1];
 
   useEffect(() => {
@@ -74,12 +74,12 @@ export default function Layout(
       <div className="flex">
         {/* Sidebar */}
         <div
-          className={`sticky top-20 h-[calc(100vh-5rem)] w-24 transform flex-col border-r border-blue-100 text-black transition-all duration-300 ${
-            isOpen ? "translate-x-0" : "-translate-x-24"
-          } md:translate-x-0`}
+          className={`fixed top-20 z-20 h-[calc(100vh-5rem)] w-24 transform flex-col border-r border-blue-100 bg-white text-black transition-all duration-300 ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          } md:sticky md:translate-x-0`}
         >
           {/* Sidebar items */}
-          <nav className="mt-2 grid place-content-center gap-2">
+          <nav className="mt-4 grid place-content-center gap-4">
             <SidebarItem
               img="/search-interface-symbol.png"
               text="Search"
@@ -101,7 +101,7 @@ export default function Layout(
           </nav>
         </div>
         {/* Content */}
-        <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
+        <div className="w-[calc(100vh-6rem)] flex-grow p-6 md:p-12">
           <Search placeholder={searchDefault} />
           {children}
         </div>

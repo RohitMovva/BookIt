@@ -3,28 +3,33 @@
 import { Condition, Listing } from "./definitions";
 import { v4 as uuidv4 } from "uuid";
 
-// Updated placeholder data function
-export async function fetchFilteredListings(query: string): Promise<Listing[]> {
+// returns listings with query and current page (lets do 20 items per page for now)
+export async function fetchFilteredListings(
+  query: string,
+  currentPage: number,
+): Promise<Listing[]> {
   return [
     {
       uuid: uuidv4(),
       title: "Beautiful Apartment in the City",
-      description: "A spacious 2-bedroom apartment with a stunning view.",
+      description:
+        "A spacious 2-bedroom apartment with a stunning view. asdfasdf asdf asdf asd fasd fas dfa sdfa sdf asdfa sdf asd fasd fasdf asdf asdf asdf asdf asdf  ",
       price: 1200,
       contactInfo: {
         phone: "123-456-7890",
         email: "owner@example.com",
       },
-      thumbnail: "https://example.com/image1.jpg",
+      thumbnail: "/placeholderparrot.jpg",
       images: [
-        "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg",
-        "https://example.com/image3.jpg",
+        "/placeholderparrot.jpg",
+        "/placeholderparrot.jpg",
+        "/placeholderparrot.jpg",
       ],
       tags: {
         condition: Condition.Good,
         class: "apartment",
       },
+      saved: true,
     },
     {
       uuid: uuidv4(),
@@ -35,17 +40,22 @@ export async function fetchFilteredListings(query: string): Promise<Listing[]> {
         phone: "987-654-3210",
         email: "cottageowner@example.com",
       },
-      thumbnail: "https://example.com/image4.jpg",
+      thumbnail: "/placeholderparrot.jpg",
       images: [
-        "https://example.com/image4.jpg",
-        "https://example.com/image5.jpg",
-        "https://example.com/image6.jpg",
+        "/placeholderparrot.jpg",
+        "/placeholderparrot.jpg",
+        "/placeholderparrot.jpg",
       ],
       tags: {
         condition: Condition.VeryGood,
         class: "cottage",
       },
+      saved: false,
     },
-    // More placeholder items as needed
   ];
+}
+
+// returns number of pages for a query
+export async function fetchListingsPages(query: string) {
+  return 2;
 }
