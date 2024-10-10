@@ -59,7 +59,7 @@ export default function ListingGallery() {
             className="relative cursor-pointer rounded-xl"
             onClick={() => openListing(listing)}
           >
-            <ImageComponent />
+            <ImageComponent h="h-96" />
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
@@ -103,27 +103,36 @@ export default function ListingGallery() {
           </article>
         ))}
       </div>
+      {/* Listing Popup */}
       {selectedListing && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           onClick={handleListingClick}
         >
-          <div className="relative flex h-5/6 w-11/12 max-w-4xl rounded-lg bg-white shadow-lg">
+          {/* Content */}
+          <div className="relative flex w-3/4 h-screen rounded-lg bg-white shadow-lg">
+            {/* Images (left) */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
-              <img
+              <div className="h-80">
+                <ImageComponent  w="w-full" h="h-full" />
+              </div>
+              {/* <img
                 src={selectedListing.thumbnail}
                 alt={selectedListing.title}
                 className="mb-4 h-48 w-full rounded-md object-cover"
-              />
+              /> */}
               {selectedListing.images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`${selectedListing.title} image ${idx + 1}`}
-                  className="mb-4 h-48 w-full rounded-md object-cover"
-                />
+                <div>
+                  <ImageComponent  w="w-full" h="h-80" />
+                </div>
+                // <img
+                //   src={img}
+                //   alt={`${selectedListing.title} image ${idx + 1}`}
+                //   className="mb-4 h-48 w-full rounded-md object-cover"
+                // />
               ))}
             </div>
+            {/* Text (right) */}
             <div className="w-1/2 overflow-y-auto p-6">
               <h2 className="mb-2 text-2xl font-semibold">
                 {selectedListing.title}

@@ -22,7 +22,7 @@ export default function TwoColTextLeft({
   return (
     <section className="grid gap-4 rounded-xl lg:grid-cols-2">
       {leftSide}
-      <ImageComponent />
+      <ImageComponent h="h-96" />
     </section>
   );
 }

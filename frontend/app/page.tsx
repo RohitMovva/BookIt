@@ -26,7 +26,7 @@ export default function Hero() {
             </h1>
             <Button text="Sign Up" href="/signup" />
           </div>
-          <ImageComponent />
+          <ImageComponent h="h-96" />
         </section>
         {/* Square Cards */}
         <section className={`${intraSectiongapy}`}>
