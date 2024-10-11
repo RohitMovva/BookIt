@@ -13,15 +13,9 @@ export default function EmailInput() {
     e.preventDefault();
     if (!email) {
       router.push(`/signup`);
-      return
+    } else {
+      router.push(`/signup?email=${encodeURIComponent(email)}`);
     }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Please enter a valid email.");
-      return;
-    }
-    setError("");
-    router.push(`/signup?email=${encodeURIComponent(email)}`);
   };
 
   return (
