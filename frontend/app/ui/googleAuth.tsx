@@ -92,12 +92,13 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {!showUsernameForm && (
         <div
           id={
             mode === "signin" ? "google-signin-button" : "google-signup-button"
           }
+          className="w-full" // Ensures full width for the container
         ></div>
       )}
 

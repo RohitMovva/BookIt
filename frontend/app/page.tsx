@@ -5,6 +5,7 @@ import SquareCard from "./ui/hero/square-card";
 import TwoColTextLeft from "./ui/hero/two-col-text-left";
 import CollapsibleComponent from "./ui/hero/collapsible";
 import Header from "./ui/hero/header";
+import EmailInput from "./ui/hero/email-input";
 
 export default function Hero() {
   const intraSectiongapy = "grid gap-y-20";
@@ -24,7 +25,7 @@ export default function Hero() {
             <h1 className="mb-5 text-7xl">
               Shopping for course materials made easy
             </h1>
-            <Button text="Sign Up" href="/signup" />
+            <EmailInput />
           </div>
           <ImageComponent h="h-96" />
         </section>
