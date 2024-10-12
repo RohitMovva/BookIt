@@ -1,5 +1,7 @@
 import TempLogo from "../temp-logo";
-import Button from "../button";
+// import Button from "../hero/button";
+import Button from "../button"
+import GoogleAuth from "../../components/GoogleAuth";
 
 export default function Header() {
   return (
