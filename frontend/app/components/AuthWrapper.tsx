@@ -23,7 +23,9 @@ export default async function AuthWrapper({
 }) {
   const user = await getUser();
 
+  console.log("USER: " + user);
   if (!user) {
+    
     return <HeroPage />;
   }
 

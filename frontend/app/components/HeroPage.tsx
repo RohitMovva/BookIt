@@ -1,10 +1,10 @@
 "use client";
 import ImageComponent from "../ui/image";
-import Button from "../ui/hero/button";
 import SquareCard from "../ui/hero/square-card";
 import TwoColTextLeft from "../ui/hero/two-col-text-left";
 import CollapsibleComponent from "../ui/hero/collapsible";
 import Header from "../ui/hero/header";
+import Button from "../ui/button";
 
 export default function Hero() {
   // const checkLogInStatus = async (response: any) => {

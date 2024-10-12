@@ -1,5 +1,6 @@
 import TempLogo from "../temp-logo";
-import Button from "../hero/button";
+// import Button from "../hero/button";
+import Button from "../button"
 import GoogleAuth from "../../components/GoogleAuth";
 
 export default function Header() {
@@ -16,9 +17,7 @@ export default function Header() {
         </div>
         <div className="flex h-full items-center space-x-5">
           <li>
-            <Button
-              text="Sign Up"
-            />
+            <Button text="Sign Up" href="/signup" />
           </li>
           <li>
             <Button
@@ -27,6 +26,7 @@ export default function Header() {
               borderColor="border-black"
               bgColor="bg-white"
               textColor="text-black"
+              href="/login"
             />
           </li>
         </div>
