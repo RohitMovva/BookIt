@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify, session
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app import db
-from app.models import User
+from app.models import User, Listing
+from datetime import datetime
 
 bp = Blueprint('api', __name__)
 
@@ -76,6 +77,84 @@ def check_auth():
             return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     return jsonify({"authenticated": False}), 200
 
-@bp.route('/test', methods=['GET'])
-def test_endpoint():
-    return jsonify({"message": "Hello, World!"}), 200
+@bp.route('/create-listing', methods=['POST'])
+def create_listing():
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    data = request.json
+    user = User.query.get(session['user_id'])
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    new_listing = Listing(
+        title=data['title'],
+        description=data['description'],
+        price=data['price'],
+        phone_number=data['phone_number'],
+        email_address=data['email_address'],
+        thumbnail_image=data['thumbnail_image'],
+        other_images=data.get('other_images', []),
+        condition=data['condition'],
+        date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        class_type=data['class_type'],
+        user_id=user.id
+    )
+
+    db.session.add(new_listing)
+    db.session.commit()
+
+    return jsonify({"message": "Listing created successfully", "listing": new_listing.to_dict()}), 201
+
+@bp.route('/get-listings', methods=['GET'])
+def get_listings():
+    listings = Listing.query.all()
+    return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
+
+@bp.route('/get-user-listings', methods=['GET'])
+def get_user_listings():
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    user = User.query.get(session['user_id'])
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    listings = user.listings.all()
+    return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
+
+@bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
+def update_listing(listing_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    listing = Listing.query.get(listing_id)
+    if not listing:
+        return jsonify({"error": "Listing not found"}), 404
+
+    if listing.user_id != session['user_id']:
+        return jsonify({"error": "Unauthorized to update this listing"}), 403
+
+    data = request.json
+    for key, value in data.items():
+        setattr(listing, key, value)
+
+    db.session.commit()
+    return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
+
+@bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
+def delete_listing(listing_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    listing = Listing.query.get(listing_id)
+    if not listing:
+        return jsonify({"error": "Listing not found"}), 404
+
+    if listing.user_id != session['user_id']:
+        return jsonify({"error": "Unauthorized to delete this listing"}), 403
+
+    db.session.delete(listing)
+    db.session.commit()
+    return jsonify({"message": "Listing deleted successfully"}), 200
