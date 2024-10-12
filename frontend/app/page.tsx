@@ -22,7 +22,7 @@ export default function Hero() {
           className={`${intraSectiongapy} items-center justify-between gap-x-12 lg:grid-cols-2`}
         >
           <div>
-            <h1 className="mb-5 text-7xl">
+            <h1 className="mb-6 text-5xl text-center md:text-left md:text-6xl">
               Shopping for course materials made easy
             </h1>
             <EmailInput />
