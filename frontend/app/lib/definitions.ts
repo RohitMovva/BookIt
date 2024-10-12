@@ -9,24 +9,17 @@ export enum Condition {
   LikeNew = "Like New",
 }
 
-export interface ListingTags {
-  condition: Condition;
-  class?: string;
-}
-
-export interface ContactInfo {
-  phone: string;
-  email: string;
-}
-
 export interface Listing {
   uuid: string;
   title: string;
   description: string;
   price: number;
-  contactInfo: ContactInfo;
+  phone: string;
+  email: string;
   thumbnail: string;
   images: string[];
-  tags: ListingTags;
+  condition: Condition;
+  date: string;
+  class?: string;
   saved: boolean;
 }
