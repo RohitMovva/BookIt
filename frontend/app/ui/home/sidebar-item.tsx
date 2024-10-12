@@ -24,7 +24,7 @@ export default function SidebarItem({
       <div
         className={`rounded-full px-3.5 py-2 ${pathname === href ? "bg-blue-50" : ""}`}
       >
-        <Image src={img} alt={alt} width={24} height={24} />
+        <Image src={img} alt={alt} width={20} height={20} />
       </div>
       <p className="text-xs">{text}</p>
     </Link>

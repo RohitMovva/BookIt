@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import Image from "next/image";
 
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
@@ -18,18 +19,26 @@ export default function Search({ placeholder }: { placeholder: string }) {
   }, 300);
 
   return (
-    <div>
+    <div className="relative">
       <label htmlFor="search" className="sr-only">
         Search
       </label>
       <input
-        className="h-12 w-full rounded-md border border-gray-200 p-2 text-sm placeholder:text-gray-500"
+        className="flex h-12 w-full transform items-center justify-center rounded-xl border border-gray-400 px-4 pl-12 placeholder:text-gray-500 focus:outline-none"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
         defaultValue={searchParams.get("query")?.toString()}
       />
+      <div className="absolute left-4 top-1/2 -translate-y-1/2">
+        <Image
+          src={"/search-interface-symbol.png"}
+          height={20}
+          width={20}
+          alt=""
+        />
+      </div>
     </div>
   );
 }

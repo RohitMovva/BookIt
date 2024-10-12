@@ -45,7 +45,7 @@ export default function DropdownButton({
   const buttonContent = (
     <button
       onClick={toggleDropdown}
-      className={`${bgColor} ${textColor} ${border} ${borderColor} flex h-12 transform items-center justify-center rounded-xl px-4 text-base transition-transform duration-300 hover:-translate-y-1`}
+      className={`${bgColor} ${textColor} ${border} ${borderColor} flex h-12 transform items-center justify-center rounded-xl px-4 transition-transform duration-300 hover:-translate-y-1`}
     >
       {text}
     </button>

@@ -91,7 +91,7 @@ export default function Page() {
             id="email"
             value={email}
             onChange={handleInputChange(setEmail)} // Use handler to update email
-            className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 text-base focus:outline-none"
+            className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 focus:outline-none"
             placeholder="Email"
           />
           <input
@@ -99,7 +99,7 @@ export default function Page() {
             id="username"
             value={username}
             onChange={handleInputChange(setUsername)} // Use handler to update username
-            className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 text-base focus:outline-none"
+            className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 focus:outline-none"
             placeholder="Username"
           />
           <div className="relative rounded-xl">
@@ -108,7 +108,7 @@ export default function Page() {
               id="password"
               value={password}
               onChange={handleInputChange(setPassword)} // Use handler to update password
-              className="flex h-12 w-full transform items-center justify-center rounded-xl border border-gray-400 px-4 text-base focus:outline-none"
+              className="flex h-12 w-full transform items-center justify-center rounded-xl border border-gray-400 px-4 focus:outline-none"
               placeholder="Password"
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-full p-1 transition-all duration-300 hover:bg-gray-300">
@@ -129,7 +129,7 @@ export default function Page() {
               id="confirm-password"
               value={confirmPassword}
               onChange={handleInputChange(setConfirmPassword)} // Use handler to update confirm password
-              className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 text-base transition-transform duration-300 hover:-translate-y-1 focus:outline-none"
+              className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 transition-transform duration-300 hover:-translate-y-1 focus:outline-none"
               placeholder="Confirm Password"
             />
           )}

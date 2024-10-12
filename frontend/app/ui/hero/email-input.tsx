@@ -25,7 +25,7 @@ export default function EmailInput() {
         id="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 text-base transition-transform duration-300 hover:-translate-y-1 focus:outline-none"
+        className="flex h-12 transform items-center justify-center rounded-xl border border-gray-400 px-4 focus:outline-none"
         placeholder="Enter your email"
       />
       {error && <p className="text-sm text-red-500">{error}</p>}
