@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import GoogleAuth from "../ui/googleAuth";
+import GoogleAuth from "../ui/google-auth";
 import Button from "../ui/button";
 
 export default function Page() {

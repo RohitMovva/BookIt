@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { inter } from "./ui/fonts";
 import "./ui/globals.css";
+import AuthWrapper from "./ui/auth-wrapper";
 
 export const metadata: Metadata = {
   title: "Bookit",
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} box-border antialiased`}>
-        {children}
+        <AuthWrapper>{children}</AuthWrapper>
       </body>
     </html>
   );
