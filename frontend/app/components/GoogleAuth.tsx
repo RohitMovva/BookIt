@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from 'next/navigation';
+import { useAuthStatus } from '../api/hooks/useAuthStatus';
 
 interface Props {
   mode: 'signin' | 'signup';
@@ -9,6 +10,7 @@ interface Props {
 
 const GoogleAuth: React.FC<Props> = ({ mode }) => {
   const router = useRouter();
+  const { checkAuthStatus } = useAuthStatus();
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -34,28 +36,29 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
     };
   }, [mode]);
 
-  const handleCredentialResponse = (response: any) => {
+  const handleCredentialResponse = async (response: any) => {
     const idToken = response.credential;
     
-    // Send the token to your server
-    fetch(`/api/${mode}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ credential: idToken }),
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+      const authResponse = await fetch(`/api/${mode}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: idToken }),
+      });
+
+      const data = await authResponse.json();
+
       if (data.success) {
-        router.push('/');
+        await checkAuthStatus();  // Update the auth status
+        router.push('/');  // Redirect to home page
       } else {
         console.error('Authentication failed');
       }
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('Error:', error);
-    });
+    }
   };
 
   return (

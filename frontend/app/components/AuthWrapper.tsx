@@ -1,33 +1,25 @@
-// app/components/AuthWrapper.tsx
-import { cookies } from 'next/headers';
+'use client'
+
+import React from 'react';
+import { useAuthStatus } from '../api/hooks/useAuthStatus';
 import HeroPage from './HeroPage';
-import { redirect } from 'next/dist/server/api-utils';
 
-async function getUser() {
-  const cookieStore = cookies();
-  const token = cookieStore.get('auth_token');
-  
-  if (!token) {
-    return null;
-  }
-
-  // Here you would typically validate the token with your backend
-  // For this example, we'll just assume the presence of a token means the user is authenticated
-  return { authenticated: true };
+interface AuthWrapperProps {
+  children: React.ReactNode;
 }
 
-export default async function AuthWrapper({ 
-  children 
-}: { 
-  children: React.ReactNode 
-}) {
-  const user = await getUser();
+const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
+  const { isAuthenticated } = useAuthStatus();
 
-  console.log("USER: " + user);
-  if (!user) {
-    
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
     return <HeroPage />;
   }
 
   return <>{children}</>;
-}
+};
+
+export default AuthWrapper;
