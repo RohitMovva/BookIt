@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useDebouncedCallback } from "use-debounce";
 import TempLogo from "../ui/temp-logo";
 import SidebarItem from "../ui/home/sidebar-item";
 import Search from "../ui/home/search";
 import { fetchUserProfilePicture } from "../lib/data";
 import Button from "../ui/button";
-import DropdownButton from "../ui/button-dropdown";
+import DropdownButton from "../ui/home/button-dropdown";
+import PriceRangeSlider from "../ui/home/price-range-slider";
 
 export default function Layout(
   { children }: { children: React.ReactNode },
@@ -44,6 +46,15 @@ export default function Layout(
       toggleSidebar();
     }
   };
+
+  const handlePriceChange = useDebouncedCallback(
+    (min: number, max: number) => {
+      console.log(`Selected price range: $${min} - $${max}`);
+      // Add logic to filter products or perform actions with selected range
+    },
+    300, // Debounce delay in milliseconds
+  );
+
 
   return (
     <div className="scrollbar-track-white text-pretty">
@@ -119,12 +130,12 @@ export default function Layout(
         <div
           className={`fixed left-0 top-0 z-40 h-screen max-w-0 transform flex-col overflow-hidden border-blue-100 bg-white text-black transition-all duration-300 md:static md:z-20 md:h-[calc(100vh-5rem)] md:border-r ${
             isOpen
-              ? "w-1/2 max-w-full translate-x-0 md:left-24 md:w-fit"
+              ? "max-w-full translate-x-0 rounded-xl md:left-24 md:rounded-none"
               : "-translate-x-full"
           }`}
         >
           {/* Filters */}
-          <section className="grid h-full place-content-center gap-4 p-6 md:mt-4 md:h-fit">
+          <section className="grid h-full w-72 gap-4 p-2 md:mt-4 md:h-fit">
             <DropdownButton
               text="Menu"
               options={[
@@ -135,6 +146,13 @@ export default function Layout(
                   onClick: () => console.log("Logging out..."),
                 },
               ]}
+              isOpen={isOpen}
+            />
+            <PriceRangeSlider
+              min={0}
+              max={1000}
+              step={1}
+              onChange={handlePriceChange}
             />
           </section>
         </div>
