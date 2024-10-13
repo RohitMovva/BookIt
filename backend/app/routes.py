@@ -4,8 +4,9 @@ from google.auth.transport import requests
 from app import db
 from app.models import User, Listing
 from datetime import datetime
+from flask_cors import cross_origin
 
-bp = Blueprint('api', __name__)
+bp = Blueprint('/api', __name__)
 
 # You'll need to install google-auth: pip install google-auth
 CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
@@ -64,10 +65,20 @@ def complete_signup():
     else:
         return jsonify({"error": "User not found"}), 404
 
-@bp.route('/signout', methods=['POST'])
+@bp.route('/signout', methods=['POST', 'OPTIONS'])
+@cross_origin(supports_credentials=True)
 def signout():
+    if request.method == "OPTIONS":
+        # Explicitly handle the preflight request
+        response = jsonify({'status': 'ok'})
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+
     session.pop('user_id', None)
     return jsonify({"message": "Successfully signed out"}), 200
+
+
 
 @bp.route('/check-auth', methods=['GET'])
 def check_auth():
