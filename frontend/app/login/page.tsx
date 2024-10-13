@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import React from 'react';
-import GoogleAuth from '../components/GoogleAuth';
+import React from "react";
+import GoogleAuth from "../ui/google-auth";
 
 const LoginSignupPage: React.FC = () => {
   return (
-    <div className="grid place-content-center h-screen">
+    <div className="grid h-screen place-content-center">
       <h2>Sign In</h2>
       <GoogleAuth mode="signin" />
       <h2>Sign Up</h2>

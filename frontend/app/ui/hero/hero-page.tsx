@@ -1,10 +1,11 @@
 "use client";
-import ImageComponent from "../ui/image";
-import SquareCard from "../ui/hero/square-card";
-import TwoColTextLeft from "../ui/hero/two-col-text-left";
-import CollapsibleComponent from "../ui/hero/collapsible";
-import Header from "../ui/hero/header";
-import Button from "../ui/button";
+import ImageComponent from "../image";
+import SquareCard from "./square-card";
+import TwoColTextLeft from "./two-col-text-left";
+import CollapsibleComponent from "./collapsible";
+import Header from "./header";
+import Button from "../button";
+import EmailInput from "./email-input";
 
 export default function Hero() {
   // const checkLogInStatus = async (response: any) => {
@@ -37,12 +38,12 @@ export default function Hero() {
           className={`${intraSectiongapy} items-center justify-between gap-x-12 lg:grid-cols-2`}
         >
           <div>
-            <h1 className="mb-5 text-7xl">
+            <h1 className="mb-6 text-center text-5xl md:text-left md:text-6xl">
               Shopping for course materials made easy
             </h1>
-            <Button text="Sign Up" href="" />
+            <EmailInput />
           </div>
-          <ImageComponent />
+          <ImageComponent h="h-96" />
         </section>
         {/* Square Cards */}
         <section className={`${intraSectiongapy}`}>

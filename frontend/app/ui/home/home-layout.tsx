@@ -1,28 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
-import TempLogo from "../ui/temp-logo";
-import SidebarItem from "../ui/home/sidebar-item";
-import Search from "../ui/home/search";
-import { fetchUserProfilePicture } from "../lib/data";
-import Button from "../ui/button";
-import DropdownButton from "../ui/home/button-dropdown";
-import PriceRangeSlider from "../ui/home/price-range-slider";
+import TempLogo from "../temp-logo";
+import SidebarItem from "./sidebar-item";
+import Search from "./search";
+import { fetchUserProfilePicture } from "../../lib/data";
+import Button from "../button";
+import DropdownButton from "../button-dropdown";
+import PriceRangeSlider from "./price-range-slider";
 
-export default function Layout(
-  { children }: { children: React.ReactNode },
-  {
-    searchParams,
-  }: {
-    searchParams?: {
-      query?: string;
-      page?: string;
-    };
-  },
-) {
+export default function HomeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -54,7 +48,6 @@ export default function Layout(
     },
     300, // Debounce delay in milliseconds
   );
-
 
   return (
     <div className="scrollbar-track-white text-pretty">
@@ -103,19 +96,19 @@ export default function Layout(
             <SidebarItem
               img="/search-interface-symbol.png"
               text="Search"
-              href="/home"
+              href="/"
               pathname={pathname}
             />
             <SidebarItem
               img="/bookmark.png"
               text="Saved"
-              href="/home/saved"
+              href="/saved"
               pathname={pathname}
             />
             <SidebarItem
               img="/list.png"
               text="Listings"
-              href="/home/listings"
+              href="/listings"
               pathname={pathname}
             />
           </nav>
