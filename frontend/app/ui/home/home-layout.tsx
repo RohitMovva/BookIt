@@ -121,7 +121,7 @@ export default function HomeLayout({
         ></div>
         {/* Collapsable */}
         <div
-          className={`fixed left-0 top-0 z-40 h-screen max-w-0 transform flex-col overflow-hidden border-blue-100 bg-white text-black transition-all duration-300 md:static md:z-20 md:h-[calc(100vh-5rem)] md:border-r ${
+          className={`fixed left-0 top-0 z-40 h-screen max-w-0 transform flex-col overflow-hidden border-blue-100 bg-white text-black transition-all duration-300 md:sticky md:top-20 md:z-20 md:h-[calc(100vh-5rem)] md:border-r ${
             isOpen
               ? "max-w-full translate-x-0 rounded-xl md:left-24 md:rounded-none"
               : "-translate-x-full"

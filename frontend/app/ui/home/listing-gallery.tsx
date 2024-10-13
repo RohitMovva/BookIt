@@ -144,14 +144,14 @@ export default function ListingGallery() {
                 ${selectedListing.price.toFixed(2)}
               </p>
               <p className="mb-4 text-sm text-gray-500">
-                Condition: {selectedListing.tags.condition}
+                Condition: {selectedListing.condition}
               </p>
               <p className="font-semibold">Contact Information:</p>
               <p className="text-sm text-gray-700">
-                Phone: {selectedListing.contactInfo.phone}
+                Phone: {selectedListing.phone}
               </p>
               <p className="text-sm text-gray-700">
-                Email: {selectedListing.contactInfo.email}
+                Email: {selectedListing.email}
               </p>
             </div>
           </div>
