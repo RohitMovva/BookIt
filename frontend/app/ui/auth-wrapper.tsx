@@ -19,13 +19,20 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const redirectNoAuth = ["/login", "/signup"];
   const homeLayout = ["/", "/listings", "/saved"];
 
+  console.log(isAuthenticated);
+
   // Render loading, hero page, or home layout based on authentication
-  if (authNeeded.includes(pathname) && isAuthenticated === null) {
-    return <div>Loading...</div>;
+  if (isAuthenticated === null) {
+    return;
+  }
+
+  if (!isAuthenticated && pathname === "/") {
+    return <Hero />;
   }
 
   if (authNeeded.includes(pathname) && !isAuthenticated) {
-    return <Hero />;
+    router.push("/login");
+    return;
   }
 
   if (redirectNoAuth.includes(pathname) && isAuthenticated) {

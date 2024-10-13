@@ -8,23 +8,8 @@ import Button from "../button";
 import EmailInput from "./email-input";
 
 export default function Hero() {
-  // const checkLogInStatus = async (response: any) => {
-  //   const idToken = response.credential;
-  //   try {
-  //     const userResponse = await axios.post(`http://127.0.0.1:5000/check-auth`, { credential: idToken });
-  //     if (mode === 'signin') {
-  //       console.log("Sign-in successful:", userResponse.data);
-  //       // Handle successful sign-in (e.g., update app state, redirect)
-  //     } else {
-  //       setGoogleUser(userResponse.data.user);
-  //       setShowUsernameForm(true);
-  //     }
-  //   } catch (error) {
-  //     console.error(`${mode} error:`, error);
-  //     setError(`Error during ${mode}. Please try again.`);
-  //   }
-  // };
   const intraSectiongapy = "grid gap-y-20";
+
   return (
     <div className="grid gap-y-20 text-pretty lg:gap-y-40">
       {/* Fixed header */}
