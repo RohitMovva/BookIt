@@ -28,7 +28,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     return <Hero />;
   }
 
-  if (redirectNoAuth.includes(pathname)) {
+  if (redirectNoAuth.includes(pathname) && isAuthenticated) {
     router.push("/");
     return;
   }

@@ -1,4 +1,4 @@
-import TempLogo from "../temp-logo";
+import TempLogo from "../logo";
 // import Button from "../hero/button";
 import Button from "../button";
 import GoogleAuth from "../google-auth";
