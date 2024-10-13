@@ -77,6 +77,24 @@ def check_auth():
             return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     return jsonify({"authenticated": False}), 200
 
+@bp.route('/user-info/<int:user_id>', methods=['GET'])
+def get_user_info(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify(user.to_dict()), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+# You can also add an endpoint to get the current user's info
+@bp.route('/current-user', methods=['GET'])
+def get_current_user_info():
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user:
+            return jsonify(user.to_dict()), 200
+    return jsonify({"error": "Not authenticated"}), 401
+
+
 @bp.route('/create-listing', methods=['POST'])
 def create_listing():
     if 'user_id' not in session:
