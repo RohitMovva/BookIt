@@ -15,3 +15,6 @@ migrations/versions/*.pyo
 
 # ignore Python bytecode
 __pycache__/
+
+# ignore flask-session
+flask-session/
