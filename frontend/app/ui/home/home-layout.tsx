@@ -4,7 +4,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
-import TempLogo from "../temp-logo";
+import TempLogo from "../logo";
 import SidebarItem from "./sidebar-item";
 import Search from "./search";
 import { fetchUserProfilePicture } from "../../lib/data";
@@ -151,8 +151,26 @@ export default function HomeLayout({
         </div>
         {/* Content */}
         <div className="mx-6 my-4 flex-grow space-y-6 pb-24 md:pb-0 xl:mx-12 2xl:mx-24">
-          <Search placeholder={searchDefault} />
-          <Button text="Filters" onClick={toggleSidebar} />
+          {pathname === "/listings" ? (
+            <div className="flex space-x-6">
+              <div className="flex-grow">
+                <Search placeholder={searchDefault} />
+              </div>
+              <Button
+                text="Create Listing"
+                href="/create"
+                img="/add-white.png"
+              />
+            </div>
+          ) : (
+            <Search placeholder={searchDefault} />
+          )}
+          <Button
+            text="Filters"
+            onClick={toggleSidebar}
+            img="/filter.png"
+            isOpen={isOpen}
+          />
           {children}
         </div>
       </div>

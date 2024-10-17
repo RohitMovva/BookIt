@@ -5,7 +5,7 @@ import { useAuthStatus } from '../api/hooks/useAuthStatus';
 import axios from 'axios';
 
 interface Props {
-  mode: 'signin' | 'signup';
+  mode: "signin" | "signup";
 }
 
 const GoogleAuth: React.FC<Props> = ({ mode }) => {
@@ -21,12 +21,19 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
 
     script.onload = () => {
       window.google.accounts.id.initialize({
-        client_id: "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com",
-        callback: handleCredentialResponse
+        client_id:
+          "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
       });
       window.google.accounts.id.renderButton(
-        document.getElementById(mode === 'signin' ? "google-signin-button" : "google-signup-button"),
-        { theme: "outline", size: "large", text: mode === 'signin' ? "signin_with" : "signup_with" }
+        document.getElementById(
+          mode === "signin" ? "google-signin-button" : "google-signup-button",
+        ),
+        {
+          theme: "outline",
+          size: "large",
+          text: mode === "signin" ? "signin_with" : "signup_with",
+        },
       );
     };
 
@@ -53,15 +60,17 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
         await checkAuthStatus(); // Update the auth status
         router.push('/'); // Redirect to home page
       } else {
-        console.error('Authentication failed');
+        console.error("Authentication failed");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
-    <div id={mode === 'signin' ? "google-signin-button" : "google-signup-button"}></div>
+    <div
+      id={mode === "signin" ? "google-signin-button" : "google-signup-button"}
+    ></div>
   );
 };
 

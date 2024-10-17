@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-export default function TempLogo() {
+export default function Logo() {
   return (
     <div>
       <Image
-        src="/temp-logo.png"
+        src="/logo.png"
         width={32}
         height={32}
-        alt="Logo of books"
+        alt="L ogo of books"
       />
     </div>
   );

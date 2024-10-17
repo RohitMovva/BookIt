@@ -2,12 +2,8 @@
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
-// interface SearchProps {
-//   placeholder: string;
-//   onSearch: () => void;
-// }
+import Button from "../button";
 
-// export default function Search({ placeholder, onSearch }: SearchProps) {
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -43,6 +39,9 @@ export default function Search({ placeholder }: { placeholder: string }) {
           width={20}
           alt=""
         />
+      </div>
+      <div className="absolute right-0 top-1/2 -translate-y-1/2">
+        <Button text="Sort by" img="/caret-down.png" size={12} imgSide="r" />
       </div>
     </div>
   );
