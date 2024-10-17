@@ -10,6 +10,7 @@ export const useAuth = () => {
     const checkAuth = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:5000/check-auth', { withCredentials: true });
+        console.log('Auth response:', response.data);
         setIsAuthenticated(response.data.authenticated);
       } catch (error) {
         console.error('Error checking authentication:', error);

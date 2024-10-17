@@ -42,13 +42,14 @@ const api = axios.create({
 //   }
 // };
 
-export const signout = async (response: any) => {  
+export const signout = async (response: any) => {
   try {
     const authResponse = await fetch(`/api/signout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',  // This is important for including cookies
     });
     return response.data;
   } catch (error) {

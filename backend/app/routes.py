@@ -1,18 +1,31 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, make_response
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app import db
 from app.models import User, Listing
 from datetime import datetime
 from flask_cors import cross_origin
+import logging
 
+# logging.basicConfig(level=logging.DEBUG)
+# logger = logging.getLogger(__name__)
 bp = Blueprint('/api', __name__)
 
 # You'll need to install google-auth: pip install google-auth
 CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
 
+# @app.after_request
+# def after_request(response):
+#     print("Session after request:", session)
+#     return response
+
 @bp.route('/signin', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def signin():
+    print("SIGNING IN CALLED")
+    # logger.debug(f"Signin request data: {request.json}")
+    # logger.debug(f"Request headers: {request.headers}")
+
     data = request.json
     try:
         idinfo = id_token.verify_oauth2_token(data['credential'], requests.Request(), CLIENT_ID)
@@ -20,7 +33,12 @@ def signin():
             user = User.query.filter_by(google_id=idinfo['sub']).first()
             if user:
                 session['user_id'] = user.id  # Set session
-                return jsonify({"message": "Sign-in successful", "user": user.to_dict()}), 200
+                session.modified = True
+
+                response = make_response(jsonify({"message": "Sign-in successful", "user": user.to_dict()}))
+                # response.set_cookie('auth_user', str(user.id), expires=0)
+
+                return response, 200
             else:
                 return jsonify({"error": "User not found"}), 404
         else:
@@ -29,6 +47,7 @@ def signin():
         return jsonify({"error": "Invalid token"}), 400
 
 @bp.route('/signup', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def signup():
     data = request.json
     try:
@@ -53,6 +72,7 @@ def signup():
         return jsonify({"error": "Invalid token"}), 400
 
 @bp.route('/complete-signup', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def complete_signup():
     data = request.json
     user = User.query.filter_by(google_id=data['google_id']).first()
@@ -69,21 +89,36 @@ def complete_signup():
 @cross_origin(supports_credentials=True)
 def signout():
     if request.method == "OPTIONS":
-        # Explicitly handle the preflight request
         response = jsonify({'status': 'ok'})
         response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         return response
 
+    print("Previous session in signout:", session)
     session.pop('user_id', None)
-    return jsonify({"message": "Successfully signed out"}), 200
+    
+    response = make_response(jsonify({"message": "Successfully signed out"}))
+    response.set_cookie('auth_token', '', expires=0)
+    
+    return response, 200
 
 
 
 @bp.route('/check-auth', methods=['GET'])
+@cross_origin(supports_credentials=True)
 def check_auth():
+    print("REQUEST CALLED: ", request.cookies)
+    print(request.cookies.keys())
+    # logger.debug(f"Check-auth request headers: {request.headers}")
+    # logger.debug(f"Session in check_auth: {session}")
+    print("Session in check_auth:", session)
+    # if request.cookies.get('auth_user'):
+    #     user = User.query.get(request.cookies.get('auth_user'))
+    #     if user:
+    #         return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
+        print("Session id in check_auth:", session['user_id'])
         if user:
             return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     return jsonify({"authenticated": False}), 200
