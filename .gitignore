@@ -17,4 +17,4 @@ migrations/versions/*.pyo
 __pycache__/
 
 # ignore flask-session
-flask-session/
+flask_session/
