@@ -12,7 +12,10 @@ export const useAuthStatus = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  console.log("Current authentication status: ", isAuthenticated);
+
   const checkAuthStatus = useCallback(async () => {
+    console.log("Checking authentication status");
     try {
       setIsLoading(true);
       setError(null);
@@ -26,7 +29,7 @@ export const useAuthStatus = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  });
 
   useEffect(() => {
     checkAuthStatus();

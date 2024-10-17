@@ -11,6 +11,7 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
+  console.log("Going to check auth status");
   const { isAuthenticated } = useAuthStatus();
   const pathname = usePathname();
 
