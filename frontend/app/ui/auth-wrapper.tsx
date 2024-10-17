@@ -4,6 +4,7 @@ import { useAuthStatus } from "../api/hooks/useAuthStatus";
 import Hero from "./hero/hero-page";
 import { usePathname } from "next/navigation";
 import HomeLayout from "./home/home-layout";
+import router from "next/router";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
