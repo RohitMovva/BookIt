@@ -169,7 +169,7 @@ export default function HomeLayout({
             text="Filters"
             onClick={toggleSidebar}
             img="/filter.png"
-            isOpen={isOpen}
+          isOpen={isOpen}
           />
           {children}
         </div>

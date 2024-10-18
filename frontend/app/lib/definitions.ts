@@ -23,3 +23,21 @@ export interface Listing {
   class?: string;
   saved: boolean;
 }
+
+export interface ButtonProps {
+  text?: string;
+  bgColor?: string;
+  bgHover?: string;
+  border?: string;
+  borderColor?: string;
+  textColor?: string;
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  img?: string;
+  size?: number;
+  imgSide?: "r" | "l";
+  alt?: string;
+  onClick?: () => void;
+  isOpen?: boolean;
+  noAnimation?: boolean;
+}

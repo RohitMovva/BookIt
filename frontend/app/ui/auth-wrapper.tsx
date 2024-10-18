@@ -2,9 +2,8 @@
 
 import { useAuthStatus } from "../api/hooks/useAuthStatus";
 import Hero from "./hero/hero-page";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import HomeLayout from "./home/home-layout";
-import router from "next/router";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -14,6 +13,8 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   console.log("Going to check auth status");
   const { isAuthenticated } = useAuthStatus();
   const pathname = usePathname();
+
+  const router = useRouter();
 
   // Paths that need authentication and home layout
   const authNeeded = ["/", "/listings", "/saved"];

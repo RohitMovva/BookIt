@@ -3,6 +3,7 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 import Button from "../button";
+import DropdownButton from "../button-dropdown";
 
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
@@ -25,7 +26,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
         Search
       </label>
       <input
-        className="flex h-12 w-full transform items-center justify-center rounded-xl border border-gray-400 px-4 pl-12 placeholder:text-gray-500 focus:outline-none"
+        className="flex h-12 w-full transform items-center justify-center rounded-xl border border-gray-400 pl-12 placeholder:text-gray-500 focus:outline-none"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
@@ -41,7 +42,23 @@ export default function Search({ placeholder }: { placeholder: string }) {
         />
       </div>
       <div className="absolute right-0 top-1/2 -translate-y-1/2">
-        <Button text="Sort by" img="/caret-down.png" size={12} imgSide="r" />
+        <DropdownButton
+          text="Sort by"
+          bgColor="bg-white"
+          textColor="text-black"
+          border="border-r border-y"
+          borderColor="border-gray-400"
+          rounded="rounded-r-xl"
+          bgHover="hover:bg-gray-400"
+          caretBlack={true}
+          options={[
+            { label: "Profile", href: "/profile" },
+            { label: "Settings", href: "/settings" },
+            {
+              label: "Logout",
+              onClick: () => console.log("Logging out..."),
+            },
+          ]} isOpen={false}        />
       </div>
     </div>
   );
