@@ -34,6 +34,7 @@ def signin():
             if user:
                 session['user_id'] = user.id  # Set session
                 session.modified = True
+                print("session: ", session)
 
                 response = make_response(jsonify({"message": "Sign-in successful", "user": user.to_dict()}))
                 # response.set_cookie('auth_user', str(user.id), expires=0)

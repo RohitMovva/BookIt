@@ -5,5 +5,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///site.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_COOKIE_HTTPONLY=False
+    SESSION_COOKIE_SECURE=True
+    SESSION_COOKIE_SAMESITE='None'
     SESSION_TYPE='filesystem'
     
