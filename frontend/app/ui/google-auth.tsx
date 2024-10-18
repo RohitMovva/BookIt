@@ -45,11 +45,11 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
   const handleCredentialResponse = async (response: any) => {
     const idToken = response.credential;
     try {
-      const axiosResponse = await axios.post('http://127.0.0.1:5000/signin', 
+      const axiosResponse = await axios.post(`http://127.0.0.1:5000/${mode}`, 
         { credential: idToken },
         {
           headers: {
-            'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
           },
           withCredentials: true, // This is crucial for sending and receiving cookies
         }
