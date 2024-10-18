@@ -10,7 +10,6 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
-  console.log("Going to check auth status");
   const { isAuthenticated } = useAuthStatus();
   const pathname = usePathname();
 
@@ -20,7 +19,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const authNeeded = ["/", "/listings", "/saved"];
   const homeLayout = ["/", "/listings", "/saved"];
 
-  console.log(isAuthenticated);
 
   // Render loading, hero page, or home layout based on authentication
   if (isAuthenticated === null) {

@@ -19,7 +19,6 @@ const api = axios.create({
 // export const signout = async (): Promise<SignoutResponse | SignoutError> => {
 //   try {
 //     const response = await api.post<SignoutResponse>("/api/signout");
-//     console.log("Signout response: ", response.data);
 //     return response.data;
 //   } catch (error) {
 //     console.error("Signout error: ", error);

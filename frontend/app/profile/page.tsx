@@ -26,7 +26,6 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleThemeChange = (newTheme: string) => {
-    console.log(newTheme);
     setTheme(newTheme);
   };
 
@@ -43,7 +42,6 @@ const SettingsPage: React.FC = () => {
 
   const sendCode = () => {
     // Implement your email code sending logic here
-    console.log("Sending code to:", email);
   };
 
   const handleDeleteAccount = () => {

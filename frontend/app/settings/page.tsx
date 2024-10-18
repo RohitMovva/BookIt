@@ -24,7 +24,6 @@ export default function Page() {
       }
 
       const result = response.data;
-      console.log(result.message);
 
       deleteCookie('auth_token');
 

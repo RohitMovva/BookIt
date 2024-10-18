@@ -13,7 +13,6 @@
 //   // const [items, setItems] = useState<Item[]>([]);
 //   const [newItem, setNewItem] = useState<string>("");
 //   const [error, setError] = useState<string | null>(null);
-//   console.log("WTF")
 //   useEffect(() => {
 //     // Create the Google Sign-In script
 //     const script = document.createElement("script");
@@ -22,7 +21,6 @@
 
 //     // Append the script to the document body
 //     document.body.appendChild(script);
-//     console.log("OH YEAH")
 //     // Cleanup: Remove the script when the component unmounts
 //     return () => {
 //       document.body.removeChild(script);
@@ -43,7 +41,6 @@
 //   };
 
 //   useEffect(() => {
-//     console.log("HALLO")
 //     // Initialize the Google Sign-In after the script is loaded
 //     const initializeGoogleSignIn = () => {
 //       if (window.google) {
@@ -52,7 +49,6 @@
 //             "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com",
 //           callback: (response: GoogleSignInResponse) => {
 //             // Handle the response here
-//             console.log("Sign-in response:", response);
 //             sendCredentials(response);
 //           },
 //         });

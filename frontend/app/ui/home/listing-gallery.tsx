@@ -33,7 +33,6 @@ export default function ListingGallery() {
   };
 
   const toggleSaved = (uuid: string) => {
-    console.log(`Saved toggled for UUID: ${uuid}`);
   };
 
   const handleCopyLink = useCallback((uuid: string, e: React.MouseEvent) => {

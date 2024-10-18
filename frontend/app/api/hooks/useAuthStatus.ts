@@ -12,15 +12,11 @@ export const useAuthStatus = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log("Current authentication status: ", isAuthenticated);
-
   const checkAuthStatus = useCallback(async () => {
-    console.log("Checking authentication status");
     try {
       setIsLoading(true);
       setError(null);
       const response = await api.get('/check-auth');
-      console.log('Auth status response:', response.data);
       setIsAuthenticated(response.data.authenticated);
     } catch (error) {
       console.error("Error checking authentication status:", error);

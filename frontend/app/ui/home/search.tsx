@@ -56,7 +56,6 @@ export default function Search({ placeholder }: { placeholder: string }) {
             { label: "Settings", href: "/settings" },
             {
               label: "Logout",
-              onClick: () => console.log("Logging out..."),
             },
           ]} isOpen={false}        />
       </div>

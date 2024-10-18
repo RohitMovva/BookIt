@@ -65,9 +65,6 @@ export default function Page() {
       return;
     }
 
-    console.log(email);
-    console.log(username);
-    console.log(password);
     // Add logic to handle successful signup
   };
 
