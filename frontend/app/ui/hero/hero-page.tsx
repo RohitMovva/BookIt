@@ -42,10 +42,10 @@ export default function Hero() {
             />
             <SquareCard
               header="Save money"
-              text="Lower prices with no shipping costs. A convenient solution to a common problem."
+              text="Lower prices with no shipping costs. It's a convenient solution to a common problem."
             />
             <SquareCard
-              header="It's eco-friendly"
+              header="Be eco-friendly"
               text="Reuse course materials with no need for shipping."
             />
           </div>
@@ -59,11 +59,11 @@ export default function Hero() {
           />
           <TwoColTextLeft
             header="Quickly create listings"
-            text="Add images, tags, location, and more! Easily make your listing accessible to people interested."
+            text="Add images, tags, location, and other info! Easily make your listing accessible to people who are interested."
           />
           <TwoColTextLeft
             header="Save listings for later"
-            text="Easily bookmark listings for future reference. Never lose track of a material you need!"
+            text="Easily bookmark listings for future reference. Never lose track of material you need!"
           />
         </section>
         {/* FAQs */}
@@ -74,19 +74,19 @@ export default function Hero() {
           <div className="grid gap-5">
             <CollapsibleComponent
               header="What is bookit?"
-              text="Bookit is a student made website to buy and sell course materials within your school."
+              text="Bookit is a student made website for buying and selling course materials within your school."
             />
             <CollapsibleComponent
               header="What can I use bookit for?"
-              text="After you have taken a class, you can sell the textbook to a student a grade below you. You can also sell uniforms that don't fit anymore, or any school supplies that you dont use."
+              text="After you have taken a class, you can sell your old textbook to a student who needs it. You can also sell uniforms that don't fit anymore, or any school supplies that you don't use."
             />
             <CollapsibleComponent
               header="Where do I meet to buy or sell course materials?"
-              text="Typically the purchaser and seller meet on school grounds. This is convenient and safe for both parties."
+              text="Typically, the buyer and seller meet on school grounds. This is convenient and safe for both parties."
             />
             <CollapsibleComponent
               header="Does my school have bookit?"
-              text="Right now, bookit is only for Peak to Peak Charter school. However, we are hoping to expand in the future."
+              text="At the moment, bookit is only for Peak to Peak Charter School. However, we are hoping to expand in the future."
             />
           </div>
         </section>
@@ -99,7 +99,7 @@ export default function Hero() {
             Take a look at the process and admin features.
           </h3>
           <div className="place-self-center">
-            <Button text="Get bookit for you school" />
+            <Button text="Get bookit for your school" />
           </div>
         </section>
       </div>
