@@ -7,7 +7,7 @@ export default function Logo() {
         src="/logo.png"
         width={32}
         height={32}
-        alt="L ogo of books"
+        alt="Logo of books"
       />
     </div>
   );
