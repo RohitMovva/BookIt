@@ -1,10 +1,13 @@
 from flask import Blueprint, request, jsonify, session, make_response
+from sqlalchemy import or_
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app import db
 from app.models import User, Listing
 from datetime import datetime
 from flask_cors import cross_origin
+# from datetime import datetime
+
 import logging
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -134,13 +137,40 @@ def get_current_user_info():
     return jsonify({"error": "Not authenticated"}), 401
 
 
+# @bp.route('/create-listing', methods=['POST'])
+# def create_listing():
+#     if 'user_id' not in session:
+#         return jsonify({"error": "User not authenticated"}), 401
+
+#     data = request.json
+#     user = User.query.get(session['user_id'])
+
+#     if not user:
+#         return jsonify({"error": "User not found"}), 404
+
+#     new_listing = Listing(
+#         title=data['title'],
+#         description=data['description'],
+#         price=data['price'],
+#         phone_number=data['phone_number'],
+#         email_address=data['email_address'],
+#         thumbnail_image=data['thumbnail_image'],
+#         other_images=data.get('other_images', []),
+#         condition=data['condition'],
+#         date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+#         class_type=data['class_type'],
+#         user_id=user.id
+#     )
+
+#     db.session.add(new_listing)
+#     db.session.commit()
+
+#     return jsonify({"message": "Listing created successfully", "listing": new_listing.to_dict()}), 201
+
 @bp.route('/create-listing', methods=['POST'])
 def create_listing():
-    if 'user_id' not in session:
-        return jsonify({"error": "User not authenticated"}), 401
-
     data = request.json
-    user = User.query.get(session['user_id'])
+    user = User.query.get(data.get('user_id'))
 
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -164,10 +194,33 @@ def create_listing():
 
     return jsonify({"message": "Listing created successfully", "listing": new_listing.to_dict()}), 201
 
+
 @bp.route('/get-listings', methods=['GET'])
 def get_listings():
-    listings = Listing.query.all()
-    return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
+    query = request.args.get('query', '')
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 20))
+
+    listings_query = Listing.query
+
+    if query:
+        listings_query = listings_query.filter(
+            or_(
+                Listing.title.ilike(f'%{query}%'),
+                Listing.description.ilike(f'%{query}%'),
+                Listing.class_type.ilike(f'%{query}%')
+            )
+        )
+
+    paginated_listings = listings_query.paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "listings": [listing.to_dict() for listing in paginated_listings.items],
+        "total_pages": paginated_listings.pages,
+        "current_page": page,
+        "total_items": paginated_listings.total
+    }), 200
+
 
 @bp.route('/get-user-listings', methods=['GET'])
 def get_user_listings():

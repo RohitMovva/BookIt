@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.types import JSON
 import uuid
 
 class User(db.Model):
@@ -25,6 +26,8 @@ class User(db.Model):
         return f'<User {self.username}>'
 
 class Listing(db.Model):
+    __tablename__ = 'listing'
+
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -32,7 +35,7 @@ class Listing(db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     email_address = db.Column(db.String(120), nullable=False)
     thumbnail_image = db.Column(db.String(255), nullable=False)
-    other_images = db.Column(db.ARRAY(db.String(255)))
+    other_images = db.Column(JSON)  # Changed from ARRAY to JSON
     condition = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(20), nullable=False)
     saved = db.Column(db.Boolean, default=False)
