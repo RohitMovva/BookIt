@@ -33,9 +33,10 @@ def create_app():
     Session(app)
 
     db.init_app(app)
-    # with app.app_context():
-    #     # This will create all tables
-    #     db.create_all()
+    with app.app_context():
+        # This will create all tables
+        db.create_all()
+    # db.create_all()
     migrate.init_app(app, db)
 
     from app import routes
