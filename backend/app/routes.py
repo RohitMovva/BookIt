@@ -222,49 +222,92 @@ def get_listings():
     }), 200
 
 
-@bp.route('/get-user-listings', methods=['GET'])
-def get_user_listings():
-    if 'user_id' not in session:
-        return jsonify({"error": "User not authenticated"}), 401
+# @bp.route('/get-user-listings', methods=['GET'])
+# def get_user_listings():
+#     if 'user_id' not in session:
+#         return jsonify({"error": "User not authenticated"}), 401
 
-    user = User.query.get(session['user_id'])
+#     user = User.query.get(session['user_id'])
+#     if not user:
+#         return jsonify({"error": "User not found"}), 404
+
+#     listings = user.listings.all()
+#     return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
+
+# @bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
+# def update_listing(listing_id):
+#     if 'user_id' not in session:
+#         return jsonify({"error": "User not authenticated"}), 401
+
+#     listing = Listing.query.get(listing_id)
+#     if not listing:
+#         return jsonify({"error": "Listing not found"}), 404
+
+#     if listing.user_id != session['user_id']:
+#         return jsonify({"error": "Unauthorized to update this listing"}), 403
+
+#     data = request.json
+#     for key, value in data.items():
+#         setattr(listing, key, value)
+
+#     db.session.commit()
+#     return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
+
+# @bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
+# def delete_listing(listing_id):
+#     if 'user_id' not in session:
+#         return jsonify({"error": "User not authenticated"}), 401
+
+#     listing = Listing.query.get(listing_id)
+#     if not listing:
+#         return jsonify({"error": "Listing not found"}), 404
+
+#     if listing.user_id != session['user_id']:
+#         return jsonify({"error": "Unauthorized to delete this listing"}), 403
+
+#     db.session.delete(listing)
+#     db.session.commit()
+#     return jsonify({"message": "Listing deleted successfully"}), 200
+
+@bp.route('/get-user-listings/<int:user_id>', methods=['GET'])
+def get_user_listings(user_id):
+    user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-
     listings = user.listings.all()
     return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
 
 @bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
 def update_listing(listing_id):
-    if 'user_id' not in session:
-        return jsonify({"error": "User not authenticated"}), 401
-
+    data = request.json
+    user_id = data.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User ID not provided"}), 400
+    
     listing = Listing.query.get(listing_id)
     if not listing:
         return jsonify({"error": "Listing not found"}), 404
-
-    if listing.user_id != session['user_id']:
+    if listing.user_id != user_id:
         return jsonify({"error": "Unauthorized to update this listing"}), 403
-
-    data = request.json
+    
     for key, value in data.items():
-        setattr(listing, key, value)
-
+        if key != 'user_id':
+            setattr(listing, key, value)
     db.session.commit()
     return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
 
 @bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
 def delete_listing(listing_id):
-    if 'user_id' not in session:
-        return jsonify({"error": "User not authenticated"}), 401
-
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User ID not provided"}), 400
+    
     listing = Listing.query.get(listing_id)
     if not listing:
         return jsonify({"error": "Listing not found"}), 404
-
-    if listing.user_id != session['user_id']:
+    if listing.user_id != int(user_id):
         return jsonify({"error": "Unauthorized to delete this listing"}), 403
-
+    
     db.session.delete(listing)
     db.session.commit()
     return jsonify({"message": "Listing deleted successfully"}), 200
