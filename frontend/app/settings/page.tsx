@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import { deleteCookie } from 'cookies-next';
 import axios from 'axios';
 
-const API_BASE_URL = "http://127.0.0.1:5000";  // Make sure this matches your Flask server address
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 export default function Page() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Page() {
         headers: {
           'Content-Type': 'application/json',
         },
-        withCredentials: true,  // This is important for including cookies
+        withCredentials: true,
       });
 
       if (response.status !== 200) {
@@ -24,15 +24,12 @@ export default function Page() {
       }
 
       const result = response.data;
-      console.log(result.message);
 
-      // Delete the auth_token cookie on the client side
       deleteCookie('auth_token');
 
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       console.error('Signout error:', error);
-      // Optionally, show the error to the user
     }
   }, [router]);
 

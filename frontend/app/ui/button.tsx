@@ -1,22 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-interface ButtonProps {
-  text?: string;
-  bgColor?: string;
-  bgHover?: string;
-  border?: string;
-  borderColor?: string;
-  textColor?: string;
-  href?: string;
-  type?: "button" | "submit" | "reset";
-  img?: string;
-  size?: number;
-  imgSide?: "r" | "l";
-  alt?: string;
-  onClick?: () => void;
-  isOpen?: boolean;
-  noAnimation?: boolean;
-}
+import { ButtonProps } from "../lib/definitions";
 
 export default function Button({
   text = "Button",

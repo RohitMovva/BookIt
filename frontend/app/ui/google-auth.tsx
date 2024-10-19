@@ -55,7 +55,6 @@ const GoogleAuth: React.FC<Props> = ({ mode }) => {
         }
       );
 
-      console.log(axiosResponse.data);
       if (axiosResponse.status === 200) {
         await checkAuthStatus(); // Update the auth status
         router.push('/'); // Redirect to home page

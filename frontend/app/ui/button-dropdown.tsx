@@ -1,34 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-
-interface ButtonProps {
-  text?: string;
-  bgColor?: string;
-  bgHover?: string;
-  border?: string;
-  borderColor?: string;
-  textColor?: string;
-  href?: string;
-  onClick?: () => void;
-}
+import { ButtonProps } from "../lib/definitions";
+import Image from "next/image";
 
 interface DropdownButtonProps extends ButtonProps {
   options: { label: string; href?: string; onClick?: () => void }[]; // Dropdown options
-  isOpen: boolean; // New prop to control dropdown visibility from parent
+  isOpen?: boolean; // New prop to control dropdown visibility from parent
+  rounded?: string;
+  caretBlack?: boolean;
 }
 
 export default function DropdownButton({
   text = "Button",
   bgColor = "bg-blue-800",
+  bgHover = "",
   border = "border-0",
   borderColor = bgColor,
   textColor = "text-white",
   options,
   href,
   onClick,
-  isOpen: isOpenProp, // Rename prop to differentiate it from local state
+  isOpen: isOpenProp,
+  rounded = "rounded-xl",
+  caretBlack = false,
 }: DropdownButtonProps) {
   const [isOpen, setIsOpen] = useState(false); // Local state
+  const dropdownRef = useRef<HTMLDivElement>(null); // Ref to track the dropdown element
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev); // Toggle dropdown open state
@@ -51,17 +48,45 @@ export default function DropdownButton({
     }
   }, [isOpenProp]);
 
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false); // Close dropdown if clicked outside
+      }
+    };
+
+    // Attach event listener to document to capture clicks outside
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      // Clean up the event listener on component unmount
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const buttonContent = (
     <button
       onClick={toggleDropdown}
-      className={`${bgColor} ${textColor} ${border} ${borderColor} w-full flex h-12 transform items-center justify-center rounded-xl px-4 transition-transform duration-300 hover:-translate-y-1`}
+      className={`${
+        isOpen ? bgHover : bgColor
+      } ${textColor} ${border} ${borderColor} ${rounded} line-clamp-1 flex h-12 transform items-center justify-center gap-x-2 px-4 ${bgHover}`}
     >
       {text}
+      <Image
+        src={caretBlack ? "/caret-down-black.png" : "/caret-down.png"}
+        alt={"caret down"}
+        width={12}
+        height={12}
+      />
     </button>
   );
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={dropdownRef}>
       {href ? (
         <Link href={href} passHref>
           {buttonContent}
@@ -73,8 +98,7 @@ export default function DropdownButton({
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute left-0 mt-2 w-48 bg-white">
-          <div className="z-50 bg-red-500 py-1">
-            <p className="bg-green-500 text-right">HELLO</p>
+          <div className="z-50 py-1">
             {options.map((option, index) => (
               <Link key={index} href={option.href || "#"} passHref>
                 <button

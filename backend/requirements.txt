@@ -7,3 +7,4 @@ google-auth
 psycopg2-binary==2.9.9
 flask-session==0.8.0
 redis==5.1.1
+requests

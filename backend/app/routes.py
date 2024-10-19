@@ -19,13 +19,11 @@ CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleuserconten
 
 # @app.after_request
 # def after_request(response):
-#     print("Session after request:", session)
 #     return response
 
 @bp.route('/signin', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def signin():
-    print("SIGNING IN CALLED")
     # logger.debug(f"Signin request data: {request.json}")
     # logger.debug(f"Request headers: {request.headers}")
 
@@ -37,7 +35,6 @@ def signin():
             if user:
                 session['user_id'] = user.id  # Set session
                 session.modified = True
-                print("session: ", session)
 
                 response = make_response(jsonify({"message": "Sign-in successful", "user": user.to_dict()}))
                 # response.set_cookie('auth_user', str(user.id), expires=0)
@@ -98,7 +95,6 @@ def signout():
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         return response
 
-    print("Previous session in signout:", session)
     session.pop('user_id', None)
     
     response = make_response(jsonify({"message": "Successfully signed out"}))
@@ -111,18 +107,14 @@ def signout():
 @bp.route('/check-auth', methods=['GET'])
 @cross_origin(supports_credentials=True)
 def check_auth():
-    print("REQUEST CALLED: ", request.cookies)
-    print(request.cookies.keys())
     # logger.debug(f"Check-auth request headers: {request.headers}")
     # logger.debug(f"Session in check_auth: {session}")
-    print("Session in check_auth:", session)
     # if request.cookies.get('auth_user'):
     #     user = User.query.get(request.cookies.get('auth_user'))
     #     if user:
     #         return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
-        print("Session id in check_auth:", session['user_id'])
         if user:
             return jsonify({"authenticated": True, "user": user.to_dict()}), 200
     return jsonify({"authenticated": False}), 200

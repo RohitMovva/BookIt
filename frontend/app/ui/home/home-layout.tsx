@@ -43,7 +43,6 @@ export default function HomeLayout({
 
   const handlePriceChange = useDebouncedCallback(
     (min: number, max: number) => {
-      console.log(`Selected price range: $${min} - $${max}`);
       // Add logic to filter products or perform actions with selected range
     },
     300, // Debounce delay in milliseconds
@@ -136,7 +135,6 @@ export default function HomeLayout({
                 { label: "Settings", href: "/settings" },
                 {
                   label: "Logout",
-                  onClick: () => console.log("Logging out..."),
                 },
               ]}
               isOpen={isOpen}
@@ -169,7 +167,7 @@ export default function HomeLayout({
             text="Filters"
             onClick={toggleSidebar}
             img="/filter.png"
-            isOpen={isOpen}
+          isOpen={isOpen}
           />
           {children}
         </div>
