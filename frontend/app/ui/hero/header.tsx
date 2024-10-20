@@ -9,10 +9,10 @@ export default function Header() {
       <ul className="flex h-16 justify-between px-10">
         <div className="flex h-full items-center space-x-5">
           <li>
-            <TempLogo />
+            <a href="/"><TempLogo /></a>
           </li>
           <li>
-            <p className="text-3xl">bookit</p>
+            <p className="text-3xl"><a href="/">bookit</a></p>
           </li>
         </div>
         <div className="flex h-full items-center space-x-5">
