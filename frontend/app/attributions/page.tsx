@@ -4,9 +4,9 @@ import Image from "next/image";
 
 export default function page(){
     return(
-        <div className="min-h-screen flex-col">
+        <div>
             <Header />
-            <main className="grid grid-cols-2 m-10 gap-y-5 underline">
+            <div className="grid grid-cols-2 m-10 gap-y-5 underline min-h-screen">
             <p className="flex items-center space-x-5">
                 <a href="https://www.flaticon.com/free-icons/search"><Image src="/search-interface-symbol.png" width={32} height={32} alt="Search Icon"/></a>
                 <a href="https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Catalin Fertu - Flaticon</a>
@@ -59,7 +59,7 @@ export default function page(){
                 <a href="https://www.flaticon.com/free-icons/dropdown-arrow"><Image src="/caret-down-black.png" width={32} height={32} alt=" Icon"/></a>
                 <a href="https://www.flaticon.com/free-icons/dropdown-arrow" title="dropdown arrow icons">Dropdown arrow icons created by Dave Gandy - Flaticon</a>
             </p>
-            </main>
+            </div>
             <Footer />
         </div>
     );
