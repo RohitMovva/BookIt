@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFilteredListings, fetchUserListings, fetchSavedListings } from "../../lib/data";
+import { fetchFilteredListings, fetchUserListings, fetchSavedListings, cooltoggleSaved } from "../../lib/data";
 import { Listing } from "../../lib/definitions";
 import ImageComponent from "../image";
 import { only } from "node:test";
+import axios from 'axios';
 
 export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boolean, onlySaved?: boolean }) {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -43,7 +44,8 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
     }
   };
 
-  const toggleSaved = (uuid: string) => {
+  const toggleSaved = (uuid: string, saved: boolean) => {
+    return cooltoggleSaved(uuid, saved);
   };
 
   const handleCopyLink = useCallback((uuid: string, e: React.MouseEvent) => {
@@ -104,7 +106,10 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
                     className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleSaved(listing.uuid);
+                      toggleSaved(listing.uuid, listing.saved).then((saved) => {
+                        listing.saved = saved;
+                        setListings([...listings]);
+                      });
                     }}
                   />
                 </div>
@@ -120,11 +125,11 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
           onClick={handleListingClick}
         >
           {/* Content */}
-          <div className="relative flex w-3/4 h-screen rounded-lg bg-white shadow-lg">
+          <div className="relative flex h-screen w-3/4 rounded-lg bg-white shadow-lg">
             {/* Images (left) */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
               <div className="h-80">
-                <ImageComponent  w="w-full" h="h-full" />
+                <ImageComponent w="w-full" h="h-full" />
               </div>
               {/* <img
                 src={selectedListing.thumbnail}
@@ -133,7 +138,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
               /> */}
               {selectedListing.images.map((img, idx) => (
                 <div>
-                  <ImageComponent  w="w-full" h="h-80" />
+                  <ImageComponent w="w-full" h="h-80" />
                 </div>
                 // <img
                 //   src={img}
@@ -151,7 +156,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
                 {selectedListing.description}
               </p>
               <p className="mb-4 text-lg font-bold text-blue-600">
-                ${selectedListing.price.toFixed(2)}
+                ${selectedListing.price}
               </p>
               <p className="mb-4 text-sm text-gray-500">
                 Condition: {selectedListing.condition}

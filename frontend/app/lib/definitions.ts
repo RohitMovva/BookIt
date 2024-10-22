@@ -13,14 +13,14 @@ export interface Listing {
   uuid: string;
   title: string;
   description: string;
-  price: number;
+  price: string;
   phone: string;
   email: string;
   thumbnail: string;
   images: string[];
   condition: Condition;
   date: string;
-  class?: string;
+  class: string;
   saved: boolean;
 }
 

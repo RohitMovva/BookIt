@@ -9,7 +9,6 @@ export default async function Page({
   };
 }) {
   const query = searchParams?.query || "";
-  // const user = 
   return (
     <>
       <section>
