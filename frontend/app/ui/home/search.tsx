@@ -49,7 +49,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
           border="border-r border-y"
           borderColor="border-gray-400"
           rounded="rounded-r-xl"
-          bgHover="hover:bg-gray-400"
+          bgHover="bg-gray-400"
           caretBlack={true}
           options={[
             { label: "Profile", href: "/profile" },
