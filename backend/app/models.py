@@ -75,7 +75,7 @@ class Listing(db.Model):
             'class_type': self.class_type,
             'user_id': self.user_id,
             'save_count': self.save_count,
-            'is_saved': self.is_saved_by_current_user()
+            'saved': self.is_saved_by_current_user()
         }
     
     def is_saved_by_current_user(self):

@@ -35,6 +35,7 @@ export async function fetchFilteredListings(
         class: listing.class_type,
         saved: listing.saved
       }));
+      console.log(listings)
 
       return listings;
     } else {
@@ -99,6 +100,89 @@ export async function fetchUserListings(
   }
 }
 
+export async function fetchSavedListings(
+  query: string,
+  currentPage: number,
+  itemsPerPage: number = 20
+): Promise<Listing[]> {
+  try {
+    const user = await axios.get('http://127.0.0.1:5000/current-user', {
+      withCredentials: true
+    });
+    if (user.status === 200) {
+      const response = await axios.get(`http://127.0.0.1:5000/get-saved-listings/${user.data.id}`, {
+        params: {
+          query,
+          page: currentPage,
+          per_page: itemsPerPage,
+          sort_by: 'price',
+          sort_order: 'desc',
+          min_price: 50.0,
+          max_price: 100.0,
+        },
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        const listings: Listing[] = response.data.listings.map((listing: any) => ({
+          uuid: listing.id,
+          title: listing.title,
+          description: listing.description,
+          price: listing.price,
+          phone: listing.phone_number,
+          email: listing.email_address,
+          thumbnail: listing.thumbnail_image,
+          images: listing.other_images || [],
+          condition: listing.condition as Condition,
+          date: listing.date,
+          class: listing.class_type,
+          saved: listing.saved
+        }));
+
+        return listings;
+      } else {
+        throw new Error('Failed to fetch listings');
+      }
+    }
+    else {
+      throw new Error('Failed to fetch user');
+    }
+  } catch (error) {
+    console.error('Error fetching listings:', error);
+    throw error;
+  }
+}
+
+export async function cooltoggleSaved(uuid: string, saved: boolean) {
+  try {
+    const config = {
+      withCredentials: true  // This needs to be in the config object
+    };
+
+    let response;
+    if (!saved) {
+      response = await axios.post(
+        `http://127.0.0.1:5000/save-listing/${uuid}`, 
+        {}, // empty body
+        config
+      );
+    } else {
+      response = await axios.post(
+        `http://127.0.0.1:5000/unsave-listing/${uuid}`, 
+        {}, // empty body
+        config
+      );
+    }
+
+    if (response.status === 200) {
+      return !saved;
+    }
+    throw new Error('Failed to toggle saved');
+  } catch (error) {
+    console.error('Error toggling saved status:', error);
+    throw error;
+  }
+}
 
 // returns number of pages for a query
 export async function fetchListingsPages(query: string) {

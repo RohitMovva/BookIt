@@ -1,7 +1,19 @@
-export default async function Page() {
+import ListingGallery from "../ui/home/listing-gallery";
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
   return (
-    <div className="">
-      <h1>saved</h1>
-    </div>
+    <>
+      <section>
+        <ListingGallery onlySaved={true}/>
+      </section>
+    </>
   );
 }
