@@ -1,8 +1,8 @@
-"""Create listing table with Text for other_images
+"""empty message
 
-Revision ID: f4f9997f48bb
+Revision ID: 498eb8c2e506
 Revises: 
-Create Date: 2024-10-18 18:14:38.149280
+Create Date: 2024-10-21 09:32:27.360953
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f4f9997f48bb'
+revision = '498eb8c2e506'
 down_revision = None
 branch_labels = None
 depends_on = None
