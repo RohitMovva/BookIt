@@ -35,6 +35,7 @@ export async function fetchFilteredListings(
         class: listing.class_type,
         saved: listing.saved
       }));
+      console.log(listings)
 
       return listings;
     } else {
@@ -148,6 +149,37 @@ export async function fetchSavedListings(
     }
   } catch (error) {
     console.error('Error fetching listings:', error);
+    throw error;
+  }
+}
+
+export async function cooltoggleSaved(uuid: string, saved: boolean) {
+  try {
+    const config = {
+      withCredentials: true  // This needs to be in the config object
+    };
+
+    let response;
+    if (!saved) {
+      response = await axios.post(
+        `http://127.0.0.1:5000/save-listing/${uuid}`, 
+        {}, // empty body
+        config
+      );
+    } else {
+      response = await axios.post(
+        `http://127.0.0.1:5000/unsave-listing/${uuid}`, 
+        {}, // empty body
+        config
+      );
+    }
+
+    if (response.status === 200) {
+      return !saved;
+    }
+    throw new Error('Failed to toggle saved');
+  } catch (error) {
+    console.error('Error toggling saved status:', error);
     throw error;
   }
 }
