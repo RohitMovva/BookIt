@@ -13,7 +13,7 @@ export interface Listing {
   uuid: string;
   title: string;
   description: string;
-  price: number;
+  price: string;
   phone: string;
   email: string;
   thumbnail: string;

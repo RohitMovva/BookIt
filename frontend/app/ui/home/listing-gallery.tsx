@@ -112,11 +112,11 @@ export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
           onClick={handleListingClick}
         >
           {/* Content */}
-          <div className="relative flex w-3/4 h-screen rounded-lg bg-white shadow-lg">
+          <div className="relative flex h-screen w-3/4 rounded-lg bg-white shadow-lg">
             {/* Images (left) */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
               <div className="h-80">
-                <ImageComponent  w="w-full" h="h-full" />
+                <ImageComponent w="w-full" h="h-full" />
               </div>
               {/* <img
                 src={selectedListing.thumbnail}
@@ -125,7 +125,7 @@ export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
               /> */}
               {selectedListing.images.map((img, idx) => (
                 <div>
-                  <ImageComponent  w="w-full" h="h-80" />
+                  <ImageComponent w="w-full" h="h-80" />
                 </div>
                 // <img
                 //   src={img}
@@ -143,7 +143,7 @@ export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
                 {selectedListing.description}
               </p>
               <p className="mb-4 text-lg font-bold text-blue-600">
-                ${selectedListing.price.toFixed(2)}
+                ${selectedListing.price}
               </p>
               <p className="mb-4 text-sm text-gray-500">
                 Condition: {selectedListing.condition}
