@@ -37,7 +37,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
       console.log("Listings: ", listings)
     };
     loadListings();
-  }, [query]);
+  }, [query, min_price, max_price]);
 
   const openListing = (listing: Listing) => setSelectedListing(listing);
   const closeListing = () => setSelectedListing(null);

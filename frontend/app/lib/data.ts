@@ -1,12 +1,16 @@
+import { redirect } from "next/dist/server/api-utils";
 import { Condition, Listing } from "./definitions";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
+
 
 export async function fetchFilteredListings(
   query: string,
   currentPage: number,
-  itemsPerPage: number = 20,
   min_price: number,
-  max_price: number
+  max_price: number,
+  itemsPerPage: number = 20,
 ): Promise<Listing[]> {
   try {
     const response = await axios.get("http://127.0.0.1:5000/get-listings", {
@@ -190,7 +194,35 @@ export async function cooltoggleSaved(uuid: string, saved: boolean) {
   }
 }
 
+export async function fetchUserProfilePicture(): Promise<string> {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      const response = await axios.get(
+        `http://127.0.0.1:5000/user-info/${user.data.id}`, {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to fetch user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+
+}
+
 export async function createListing(listing: Listing) {
+  // const navigate = useNavigate(); // Note: This must be used within a React component
+
   try {
     const response = await axios.post('http://127.0.0.1:5000/create-listing', {
       title: listing.title,
@@ -201,12 +233,13 @@ export async function createListing(listing: Listing) {
       thumbnail_image: listing.thumbnail_image,
       other_images: listing.other_images,
       condition: listing.condition,
-      class_type: "english", // JOSHUA ADD THIS
+      class_type: "english",
     }, {
       withCredentials: true
     });
-    console.log(response)
-    if (response.status === 200) {
+    
+    if (response.status === 200 || response.status === 201) {
+      // navigate('/'); // Redirect to home page
       return response.data;
     } else {
       throw new Error('Failed to create listing');
@@ -217,12 +250,3 @@ export async function createListing(listing: Listing) {
   }
 }
 
-// returns number of pages for a query
-export async function fetchListingsPages(query: string) {
-  return 2;
-}
-
-// idk if we want this or just a getUserInfo() function would be enough
-export async function fetchUserProfilePicture() {
-  return "/user.png";
-}

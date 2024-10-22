@@ -8,6 +8,8 @@ import ImageComponent from "../ui/image";
 import Input from "../ui/input";
 import Textarea from "../ui/text-area";
 import StyledSelect from "../ui/select";
+import { useRouter } from "next/navigation";
+
 
 // Utility function to convert blob to base64
 const blobToBase64 = async (blob: string): Promise<string> => {
@@ -32,6 +34,7 @@ const blobToBase64 = async (blob: string): Promise<string> => {
 };
 
 export default function CreateListing() {
+  const router = useRouter();
   const [listing, setListing] = useState<Listing>({
     uuid: "",
     title: "",
@@ -95,6 +98,9 @@ export default function CreateListing() {
       
       console.log("Form submitted successfully:", listingWithBase64);
       createListing(listingWithBase64);
+      router.push("/");
+      
+      
     } catch (error) {
       setFormError("Error converting images. Please try again.");
       console.error("Error converting images to base64:", error);
