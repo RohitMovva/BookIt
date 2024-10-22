@@ -6,6 +6,7 @@ import CollapsibleComponent from "./collapsible";
 import Header from "./header";
 import Button from "../button";
 import EmailInput from "./email-input";
+import Footer from "../footer";
 
 export default function Hero() {
   const intraSectiongapy = "grid gap-y-20";
@@ -104,9 +105,7 @@ export default function Hero() {
         </section>
       </div>
       {/* Footer */}
-      <footer className="bg-blue-50 p-20">
-        <p>footer will go here</p>
-      </footer>
+        <Footer />
     </div>
   );
 }

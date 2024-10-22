@@ -3,21 +3,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFilteredListings } from "../../lib/data";
+import { fetchFilteredListings, fetchUserListings } from "../../lib/data";
 import { Listing } from "../../lib/definitions";
 import ImageComponent from "../image";
 
-export default function ListingGallery() {
+export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
   const [listings, setListings] = useState<Listing[]>([]);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false); // State for tooltip visibility
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
+  // const user = null;
 
   useEffect(() => {
     const loadListings = async () => {
-      const data = await fetchFilteredListings(query, currentPage);
+      const data = hasUser 
+        ? await fetchUserListings(query, currentPage) 
+        : await fetchFilteredListings(query, currentPage);
       setListings(data);
     };
     loadListings();
