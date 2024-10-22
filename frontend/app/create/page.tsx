@@ -51,7 +51,7 @@ export default function CreateListing() {
 
   const phoneRegex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Reset errors
     setPhoneError(false);
     setFormError("");
@@ -318,10 +318,10 @@ export default function CreateListing() {
                 <ImageComponent
                   w="w-full"
                   h="h-full"
-                  img={selectedListing.thumbnail ? selectedListing.thumbnail : "/placeholderparrot.jpg"}
+                  img={selectedListing.thumbnail_image ? selectedListing.thumbnail_image : "/placeholderparrot.jpg"}
                 />
               </div>
-              {selectedListing.images.map((img, idx) => (
+              {selectedListing.other_images.map((img, idx) => (
                 <div key={idx}>
                   <ImageComponent w="w-full" h="h-80" img={img} />
                 </div>
