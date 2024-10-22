@@ -4,13 +4,16 @@ import { useState } from "react";
 import { Condition, Listing } from "../lib/definitions";
 import Image from "next/image";
 import ImageComponent from "../ui/image";
+import Input from "../ui/input";
+import Textarea from "../ui/text-area";
+import StyledSelect from "../ui/select";
 
 export default function CreateListing() {
   const [listing, setListing] = useState<Listing>({
     uuid: "",
     title: "",
     description: "",
-    price: "", // Default price is now an empty string
+    price: "",
     phone: "",
     email: "",
     thumbnail: "",
@@ -21,39 +24,36 @@ export default function CreateListing() {
     saved: false,
   });
 
-  const [phoneError, setPhoneError] = useState(false); // Track phone validity
-  const [formError, setFormError] = useState(""); // Track form submission error
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null); // State for selected listing
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
+  const [phoneError, setPhoneError] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const phoneRegex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
+  const phoneRegex = /^[0-9]{10}$/;
 
   const handleSubmit = () => {
-    // Reset errors
     setPhoneError(false);
     setFormError("");
 
-    // Check if all fields are filled
     if (
       !listing.title ||
       !listing.description ||
       !listing.price ||
-      !listing.phone ||
       !listing.condition ||
+      !listing.phone ||
       listing.images.length === 0
     ) {
       setFormError("Please fill out all fields.");
       return;
     }
 
-    // Validate phone number
-    if (!phoneRegex.test(listing.phone)) {
+    // Check if phone is provided before validating
+    if (listing.phone && !phoneRegex.test(listing.phone)) {
       setPhoneError(true);
       setFormError("Please enter a valid 10-digit phone number.");
       return;
     }
 
-    // If all validations pass, proceed with form submission logic
     console.log("Form submitted successfully:", listing);
   };
 
@@ -63,23 +63,20 @@ export default function CreateListing() {
     >,
   ) => {
     const { name, value } = e.target;
+    // Clear form error when editing
+    setFormError("");
+
     setListing((prevListing) => ({
       ...prevListing,
-      [name]:
-        name === "price"
-          ? value === "" // Keep it empty if no input
-            ? ""
-            : Number(value) // Convert to number if input exists
-          : value,
+      [name]: name === "price" ? (value === "" ? "" : Number(value)) : value,
     }));
   };
 
   const handlePhoneBlur = () => {
-    // Validate phone number on blur
-    if (!phoneRegex.test(listing.phone)) {
-      setPhoneError(true); // Invalid phone number
+    if (listing.phone && !phoneRegex.test(listing.phone)) {
+      setPhoneError(true);
     } else {
-      setPhoneError(false); // Valid phone number
+      setPhoneError(false);
     }
   };
 
@@ -112,46 +109,49 @@ export default function CreateListing() {
     setSelectedListing(null);
   };
 
+  const options = Object.entries(Condition).map(([key, value]) => ({
+    label: value,
+    value: key,
+  }));
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Create Listing</h1>
       <form className="grid gap-4" onSubmit={(e) => e.preventDefault()}>
-        <input
+        <Input
           type="text"
           name="title"
           placeholder="Title"
-          className="input input-bordered w-full"
           value={listing.title}
           onChange={handleChange}
         />
-        <textarea
+        <Textarea
           name="description"
           placeholder="Description"
           className="textarea textarea-bordered w-full"
           value={listing.description}
           onChange={handleChange}
         />
-        <input
+        <Input
           type="number"
           name="price"
           placeholder="Price"
-          className="input input-bordered w-full"
           value={listing.price}
           onChange={handleChange}
         />
-        <input
+        <Input
           type="number"
           name="phone"
           placeholder="Phone"
           className={`input w-full [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
             phoneError ? "border-red-500" : "input-bordered"
-          }`} // Conditionally apply red border if invalid
+          }`}
           value={listing.phone}
           onChange={handleChange}
-          onBlur={handlePhoneBlur} // Validate on blur
+          onBlur={handlePhoneBlur}
         />
         {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
-        <input
+        <Input
           type="text"
           name="class"
           placeholder="Class"
@@ -159,18 +159,12 @@ export default function CreateListing() {
           value={listing.class}
           onChange={handleChange}
         />
-        <select
+        <StyledSelect
           name="condition"
-          className="select select-bordered w-full"
           value={listing.condition}
           onChange={handleChange}
-        >
-          {Object.values(Condition).map((condition) => (
-            <option key={condition} value={condition}>
-              {condition}
-            </option>
-          ))}
-        </select>
+          options={options}
+        />
         <input
           type="file"
           accept="image/*"
@@ -187,12 +181,11 @@ export default function CreateListing() {
         <button
           type="button"
           className="btn btn-primary w-full"
-          onClick={handleSubmit} // Call handleSubmit when clicked
+          onClick={handleSubmit}
         >
           Submit
         </button>
         {formError && <p className="text-red-500">{formError}</p>}{" "}
-        {/* Show form error message */}
       </form>
 
       {/* Live Preview */}
@@ -200,15 +193,15 @@ export default function CreateListing() {
         <article
           className="relative cursor-pointer rounded-xl"
           onClick={() => {
-            setSelectedListing(listing); // Set the selected listing
-            setIsPopupOpen(true); // Open the popup
+            setSelectedListing(listing);
+            setIsPopupOpen(true);
           }}
         >
           <ImageComponent
             h="h-96"
             img={
               listing.thumbnail ? listing.thumbnail : "/placeholderparrot.jpg"
-            } // Use uploaded image or placeholder
+            }
           />
           <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
           <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
@@ -221,7 +214,6 @@ export default function CreateListing() {
             <div className="grid grid-cols-2 items-center">
               <p className="text-3xl">
                 {listing.price !== "" ? `$${listing.price}` : ""}{" "}
-                {/* Handle empty price */}
               </p>
               <div className="flex place-items-center space-x-2 justify-self-end">
                 <div className="relative cursor-pointer transition-all duration-300 hover:-translate-y-1">
@@ -266,7 +258,11 @@ export default function CreateListing() {
                 <ImageComponent
                   w="w-full"
                   h="h-full"
-                  img={selectedListing.thumbnail ? selectedListing.thumbnail : "/placeholderparrot.jpg"}
+                  img={
+                    selectedListing.thumbnail
+                      ? selectedListing.thumbnail
+                      : "/placeholderparrot.jpg"
+                  }
                 />
               </div>
               {selectedListing.images.map((img, idx) => (
