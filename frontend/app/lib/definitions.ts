@@ -20,7 +20,7 @@ export interface Listing {
   images: string[];
   condition: Condition;
   date: string;
-  class?: string;
+  class: string;
   saved: boolean;
 }
 
