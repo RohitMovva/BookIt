@@ -55,10 +55,10 @@ export default function HomeLayout({
         <ul className="flex h-16 justify-between px-6 md:px-10">
           <div className="flex h-full items-center space-x-5">
             <li>
-              <TempLogo />
+              <a href="/"><TempLogo /></a>
             </li>
             <li>
-              <p className="text-3xl">bookit</p>
+              <a href="/"><p className="text-3xl">bookit</p></a>
             </li>
           </div>
           <div className="flex h-full items-center space-x-5">
