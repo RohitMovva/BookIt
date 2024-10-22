@@ -170,7 +170,9 @@ def get_current_user_info():
 @bp.route('/create-listing', methods=['POST'])
 def create_listing():
     data = request.json
-    user = User.query.get(data.get('user_id'))
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+    user = User.query.get(session['user_id'])
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -187,6 +189,7 @@ def create_listing():
         class_type=data['class_type'],
         user_id=user.id
     )
+    print("New listing: ", new_listing)
     
     db.session.add(new_listing)
     db.session.commit()

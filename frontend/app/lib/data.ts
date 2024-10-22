@@ -28,8 +28,8 @@ export async function fetchFilteredListings(
         price: listing.price,
         phone: listing.phone_number,
         email: listing.email_address,
-        thumbnail: listing.thumbnail_image,
-        images: listing.other_images || [],
+        thumbnail_image: listing.thumbnail_image,
+        other_images: listing.other_images || [],
         condition: listing.condition as Condition,
         date: listing.date,
         class: listing.class_type,
@@ -78,7 +78,7 @@ export async function fetchUserListings(
           price: listing.price,
           phone: listing.phone_number,
           email: listing.email_address,
-          thumbnail: listing.thumbnail_image,
+          thumbnail_image: listing.thumbnail_image,
           images: listing.other_images || [],
           condition: listing.condition as Condition,
           date: listing.date,
@@ -131,7 +131,7 @@ export async function fetchSavedListings(
           price: listing.price,
           phone: listing.phone_number,
           email: listing.email_address,
-          thumbnail: listing.thumbnail_image,
+          thumbnail_image: listing.thumbnail_image,
           images: listing.other_images || [],
           condition: listing.condition as Condition,
           date: listing.date,
@@ -180,6 +180,33 @@ export async function cooltoggleSaved(uuid: string, saved: boolean) {
     throw new Error('Failed to toggle saved');
   } catch (error) {
     console.error('Error toggling saved status:', error);
+    throw error;
+  }
+}
+
+export async function createListing(listing: Listing) {
+  try {
+    const response = await axios.post('http://127.0.0.1:5000/create-listing', {
+      title: listing.title,
+      description: listing.description,
+      price: listing.price,
+      phone_number: listing.phone,
+      email_address: listing.email,
+      thumbnail_image: listing.thumbnail_image,
+      other_images: listing.other_images,
+      condition: listing.condition,
+      class_type: "english", // JOSHUA ADD THIS
+    }, {
+      withCredentials: true
+    });
+    console.log(response)
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Failed to create listing');
+    }
+  } catch (error) {
+    console.error('Error creating listing:', error);
     throw error;
   }
 }

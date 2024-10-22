@@ -2,34 +2,56 @@
 
 import { useState } from "react";
 import { Condition, Listing } from "../lib/definitions";
+import {createListing} from "../lib/data";
 import Image from "next/image";
 import ImageComponent from "../ui/image";
+
+// Utility function to convert blob to base64
+const blobToBase64 = async (blob: string): Promise<string> => {
+  // If the blob is already a base64 string, return it
+  if (blob.startsWith('data:')) {
+    return blob;
+  }
+  
+  // Convert blob string to actual Blob object
+  const response = await fetch(blob);
+  const blobData = await response.blob();
+  
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      resolve(base64String);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blobData);
+  });
+};
 
 export default function CreateListing() {
   const [listing, setListing] = useState<Listing>({
     uuid: "",
     title: "",
     description: "",
-    price: "", // Default price is now an empty string
+    price: "",
     phone: "",
     email: "",
-    thumbnail: "",
-    images: [],
+    thumbnail_image: "",
+    other_images: [],
     condition: Condition.Good,
     date: new Date().toISOString(),
     saved: false,
   });
-
-  const [phoneError, setPhoneError] = useState(false); // Track phone validity
-  const [formError, setFormError] = useState(""); // Track form submission error
-
-  const phoneRegex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
-
-  const handleSubmit = () => {
+  
+  const [phoneError, setPhoneError] = useState(false);
+  const [formError, setFormError] = useState("");
+  const phoneRegex = /^[0-9]{10}$/;
+  
+  const handleSubmit = async () => {
     // Reset errors
     setPhoneError(false);
     setFormError("");
-
+    
     // Check if all fields are filled
     if (
       !listing.title ||
@@ -37,22 +59,41 @@ export default function CreateListing() {
       !listing.price ||
       !listing.phone ||
       !listing.condition ||
-      listing.images.length === 0
+      listing.other_images.length === 0
     ) {
       setFormError("Please fill out all fields.");
       return;
     }
-
+    
     // Validate phone number
     if (!phoneRegex.test(listing.phone)) {
       setPhoneError(true);
       setFormError("Please enter a valid 10-digit phone number.");
       return;
     }
-
-    // If all validations pass, proceed with form submission logic
-    console.log("Form submitted successfully:", listing);
-    // Here you can handle the form submission (e.g., send data to the server)
+    
+    try {
+      // Convert thumbnail to base64
+      const base64Thumbnail = await blobToBase64(listing.thumbnail_image);
+      
+      // Convert all images to base64
+      const base64Images = await Promise.all(
+        listing.other_images.map(image => blobToBase64(image))
+      );
+      
+      // Create new listing object with base64 converted images
+      const listingWithBase64 = {
+        ...listing,
+        thumbnail_image: base64Thumbnail,
+        other_images: base64Images
+      };
+      
+      console.log("Form submitted successfully:", listingWithBase64);
+      createListing(listingWithBase64);
+    } catch (error) {
+      setFormError("Error converting images. Please try again.");
+      console.error("Error converting images to base64:", error);
+    }
   };
 
   const handleChange = (
@@ -63,6 +104,7 @@ export default function CreateListing() {
     const { name, value } = e.target;
     setListing((prevListing) => ({
       ...prevListing,
+      // console.log("VALUE: ", value);
       [name]:
         name === "price"
           ? value === "" // Keep it empty if no input
@@ -88,8 +130,8 @@ export default function CreateListing() {
       );
       setListing((prevListing) => ({
         ...prevListing,
-        images: imageFiles,
-        thumbnail: imageFiles[0] || "",
+        other_images: imageFiles,
+        thumbnail_image: imageFiles[0] || "",
       }));
     }
   };
@@ -97,6 +139,8 @@ export default function CreateListing() {
   function openListing(listing: Listing): void {
     throw new Error("Function not implemented.");
   }
+
+  console.log("THUMBNAIL: ", listing.thumbnail_image);
 
   return (
     <div className="container mx-auto p-4">
@@ -175,8 +219,10 @@ export default function CreateListing() {
         >
           <ImageComponent
             h="h-96"
+            
             img={
-              listing.thumbnail ? listing.thumbnail : "/placeholderparrot.jpg"
+              
+              listing.thumbnail_image ? listing.thumbnail_image : "/placeholderparrot.jpg"
             } // Use uploaded image or placeholder
           />
           <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
