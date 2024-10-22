@@ -129,9 +129,10 @@ export default function CreateListing() {
       const imageFiles = Array.from(e.target.files).map((file) =>
         URL.createObjectURL(file),
       );
+      console.log(imageFiles)
       setListing((prevListing) => ({
         ...prevListing,
-        thumbnail: imageFiles[0] || "",
+        thumbnail_image: imageFiles[0] || "",
       }));
     }
   };
@@ -144,7 +145,7 @@ export default function CreateListing() {
       setListing((prevListing) => ({
         ...prevListing,
         other_images: imageFiles,
-        thumbnail_image: imageFiles[0] || "",
+        // thumbnail_image: imageFiles[0] || "",
       }));
     }
   };

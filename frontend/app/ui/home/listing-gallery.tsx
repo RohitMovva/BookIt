@@ -138,15 +138,10 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
                 alt={selectedListing.title}
                 className="mb-4 h-48 w-full rounded-md object-cover"
               /> */}
-              {selectedListing.other_images.map((img, idx) => (
+              {(selectedListing.other_images || []).map((img, idx) => (
                 <div>
                   <ImageComponent img = {img ? img : "/placeholderparrot.jpg"} w="w-full" h="h-80" />
                 </div>
-                // <img
-                //   src={img}
-                //   alt={`${selectedListing.title} image ${idx + 1}`}
-                //   className="mb-4 h-48 w-full rounded-md object-cover"
-                // />
               ))}
             </div>
             {/* Text (right) */}
