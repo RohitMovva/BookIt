@@ -73,7 +73,7 @@ export default function DropdownButton({
       onClick={toggleDropdown}
       className={`${
         isOpen ? bgHover : bgColor
-      } ${textColor} ${border} ${borderColor} ${rounded} line-clamp-1 flex h-12 transform items-center justify-center gap-x-2 px-4 ${bgHover}`}
+      } ${textColor} ${border} ${borderColor} ${rounded} line-clamp-1 flex h-12 transform items-center justify-center gap-x-2 px-4 hover:${bgHover}`}
     >
       {text}
       <Image
@@ -97,8 +97,8 @@ export default function DropdownButton({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-48 bg-white">
-          <div className="z-50 py-1">
+        <div className={`${bgHover} absolute left-0 w-full bg-white`}>
+          <div className="py-1">
             {options.map((option, index) => (
               <Link key={index} href={option.href || "#"} passHref>
                 <button

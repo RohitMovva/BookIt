@@ -1,9 +1,20 @@
-export default async function Page() {
+import ListingGallery from "../ui/home/listing-gallery";
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
+  // const user = 
   return (
     <>
-      <div>
-        <h1>My listings</h1>
-      </div>
+      <section>
+        <ListingGallery hasUser={true}/>
+      </section>
     </>
   );
 }
