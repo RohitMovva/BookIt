@@ -2,7 +2,7 @@ import TempLogo from "./logo";
 
 export default function Header() {
   return (
-    <footer className="bg-blue-50 p-2">
+    <footer className="bg-blue-50 p-6">
         <div className="flex h-full items-center place-content-center space-x-5">
             <a href="#"><TempLogo /></a>
             <p className="text-2xl pr-3"><a href="#">bookit</a></p>

@@ -40,14 +40,18 @@ export default function CreateListing() {
     other_images: [],
     condition: Condition.Good,
     date: new Date().toISOString(),
+    class: "",
     saved: false,
   });
-  
-  const [phoneError, setPhoneError] = useState(false);
-  const [formError, setFormError] = useState("");
-  const phoneRegex = /^[0-9]{10}$/;
-  
-  const handleSubmit = async () => {
+
+  const [phoneError, setPhoneError] = useState(false); // Track phone validity
+  const [formError, setFormError] = useState(""); // Track form submission error
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null); // State for selected listing
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
+
+  const phoneRegex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
+
+  const handleSubmit = () => {
     // Reset errors
     setPhoneError(false);
     setFormError("");
@@ -123,7 +127,19 @@ export default function CreateListing() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const imageFiles = Array.from(e.target.files).map((file) =>
+        URL.createObjectURL(file),
+      );
+      setListing((prevListing) => ({
+        ...prevListing,
+        thumbnail: imageFiles[0] || "",
+      }));
+    }
+  };
+
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const imageFiles = Array.from(e.target.files).map((file) =>
         URL.createObjectURL(file),
@@ -136,6 +152,10 @@ export default function CreateListing() {
     }
   };
 
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedListing(null);
+  };
   function openListing(listing: Listing): void {
     throw new Error("Function not implemented.");
   }
@@ -181,6 +201,14 @@ export default function CreateListing() {
           onBlur={handlePhoneBlur} // Validate on blur
         />
         {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
+        <input
+          type="text"
+          name="class"
+          placeholder="Class"
+          className="input input-bordered w-full"
+          value={listing.class}
+          onChange={handleChange}
+        />
         <select
           name="condition"
           className="select select-bordered w-full"
@@ -196,8 +224,14 @@ export default function CreateListing() {
         <input
           type="file"
           accept="image/*"
+          onChange={handleThumbnailChange}
+          className="file-input file-input-bordered w-full"
+        />
+        <input
+          type="file"
+          accept="image/*"
           multiple
-          onChange={handleImageChange}
+          onChange={handleImagesChange}
           className="file-input file-input-bordered w-full"
         />
         <button
@@ -215,7 +249,10 @@ export default function CreateListing() {
       <div className="max-w-96">
         <article
           className="relative cursor-pointer rounded-xl"
-          onClick={() => openListing(listing)}
+          onClick={() => {
+            setSelectedListing(listing); // Set the selected listing
+            setIsPopupOpen(true); // Open the popup
+          }}
         >
           <ImageComponent
             h="h-96"
@@ -266,6 +303,58 @@ export default function CreateListing() {
           </div>
         </article>
       </div>
+
+      {/* Popup for live preview */}
+      {isPopupOpen && selectedListing && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={closePopup}
+        >
+          {/* Content */}
+          <div className="relative flex h-screen w-3/4 rounded-lg bg-white shadow-lg">
+            {/* Images (left) */}
+            <div className="w-1/2 overflow-y-auto border-r p-4">
+              <div className="h-80">
+                <ImageComponent
+                  w="w-full"
+                  h="h-full"
+                  img={selectedListing.thumbnail ? selectedListing.thumbnail : "/placeholderparrot.jpg"}
+                />
+              </div>
+              {selectedListing.images.map((img, idx) => (
+                <div key={idx}>
+                  <ImageComponent w="w-full" h="h-80" img={img} />
+                </div>
+              ))}
+            </div>
+            {/* Text (right) */}
+            <div className="w-1/2 overflow-y-auto p-6">
+              <h2 className="mb-2 text-2xl font-semibold">
+                {selectedListing.title}
+              </h2>
+              <p className="mb-4 text-gray-700">
+                {selectedListing.description}
+              </p>
+              <p className="mb-4 text-lg font-bold text-blue-600">
+                ${selectedListing.price}
+              </p>
+              <p className="mb-4 text-sm text-gray-500">
+                Condition: {selectedListing.condition}
+              </p>
+              <p className="font-semibold">Contact Information:</p>
+              <p className="text-sm text-gray-700">
+                Phone: {selectedListing.phone}
+              </p>
+              <p className="text-sm text-gray-700">
+                Email: {selectedListing.email}
+              </p>
+              <button className="btn btn-secondary mt-4" onClick={closePopup}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

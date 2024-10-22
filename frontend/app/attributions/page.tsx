@@ -52,12 +52,16 @@ export default function page(){
                 <a href="https://www.flaticon.com/free-icons/filter" title="filter icons">Filter icons created by herikus - Flaticon</a>
             </p>
             <p className="flex items-center space-x-5">
-                <a href="https://www.flaticon.com/free-icons/close"><Image src="/close-black.png" width={32} height={32} alt=" Icon"/></a>
+                <a href="https://www.flaticon.com/free-icons/close"><Image src="/close-black.png" width={32} height={32} alt="Close Icon"/></a>
                 <a href="https://www.flaticon.com/free-icons/close" title="close icons">Close icons created by inkubators - Flaticon</a>
             </p>
             <p className="flex items-center space-x-5">
-                <a href="https://www.flaticon.com/free-icons/dropdown-arrow"><Image src="/caret-down-black.png" width={32} height={32} alt=" Icon"/></a>
+                <a href="https://www.flaticon.com/free-icons/dropdown-arrow"><Image src="/caret-down-black.png" width={32} height={32} alt="Dropdown Icon"/></a>
                 <a href="https://www.flaticon.com/free-icons/dropdown-arrow" title="dropdown arrow icons">Dropdown arrow icons created by Dave Gandy - Flaticon</a>
+            </p>
+            <p className="flex items-center space-x-5">
+                <a href="https://www.flaticon.com/free-icons/reset-button"><Image src="/reset.png" width={32} height={32} alt="Reset Button Icon"/></a>
+                <a href="https://www.flaticon.com/free-icons/reset-button" title="reset button icons">Reset button icons created by Amy K - Flaticon</a>
             </p>
             </div>
             <Footer />
