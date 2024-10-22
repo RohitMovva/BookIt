@@ -5,6 +5,8 @@ export async function fetchFilteredListings(
   query: string,
   currentPage: number,
   itemsPerPage: number = 20,
+  min_price: number,
+  max_price: number
 ): Promise<Listing[]> {
   try {
     const response = await axios.get("http://127.0.0.1:5000/get-listings", {
@@ -14,8 +16,8 @@ export async function fetchFilteredListings(
         per_page: itemsPerPage,
         sort_by: "price",
         sort_order: "desc",
-        min_price: 50.0,
-        max_price: 100.0,
+        min_price: min_price,
+        max_price: max_price,
       },
       withCredentials: true,
     });
