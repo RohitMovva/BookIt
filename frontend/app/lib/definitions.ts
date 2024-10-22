@@ -16,8 +16,8 @@ export interface Listing {
   price: string;
   phone: string;
   email: string;
-  thumbnail: string;
-  images: string[];
+  thumbnail_image: string;
+  other_images: string[];
   condition: Condition;
   date: string;
   class: string;

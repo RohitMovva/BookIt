@@ -30,7 +30,9 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
       else {
         data = await fetchFilteredListings(query, currentPage);
       }
+      console.log(data)
       setListings(data);
+      console.log("Listings: ", listings)
     };
     loadListings();
   }, [query]);
@@ -71,7 +73,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
             className="relative cursor-pointer rounded-xl"
             onClick={() => openListing(listing)}
           >
-            <ImageComponent h="h-96" />
+            <ImageComponent img = {listing.thumbnail_image ? listing.thumbnail_image : "/placeholderparrot.jpg"} h="h-96" />
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
@@ -129,16 +131,16 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
             {/* Images (left) */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
               <div className="h-80">
-                <ImageComponent w="w-full" h="h-full" />
+                <ImageComponent img = {selectedListing.thumbnail_image ? selectedListing.thumbnail_image : "/placeholderparrot.jpg"} w="w-full" h="h-full" />
               </div>
               {/* <img
-                src={selectedListing.thumbnail}
+                src={selectedListing.thumbnail_image}
                 alt={selectedListing.title}
                 className="mb-4 h-48 w-full rounded-md object-cover"
               /> */}
-              {selectedListing.images.map((img, idx) => (
+              {selectedListing.other_images.map((img, idx) => (
                 <div>
-                  <ImageComponent w="w-full" h="h-80" />
+                  <ImageComponent img = {img ? img : "/placeholderparrot.jpg"} w="w-full" h="h-80" />
                 </div>
                 // <img
                 //   src={img}

@@ -2,11 +2,34 @@
 
 import { useState } from "react";
 import { Condition, Listing } from "../lib/definitions";
+import {createListing} from "../lib/data";
 import Image from "next/image";
 import ImageComponent from "../ui/image";
 import Input from "../ui/input";
 import Textarea from "../ui/text-area";
 import StyledSelect from "../ui/select";
+
+// Utility function to convert blob to base64
+const blobToBase64 = async (blob: string): Promise<string> => {
+  // If the blob is already a base64 string, return it
+  if (blob.startsWith('data:')) {
+    return blob;
+  }
+  
+  // Convert blob string to actual Blob object
+  const response = await fetch(blob);
+  const blobData = await response.blob();
+  
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      resolve(base64String);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blobData);
+  });
+};
 
 export default function CreateListing() {
   const [listing, setListing] = useState<Listing>({
@@ -16,8 +39,8 @@ export default function CreateListing() {
     price: "",
     phone: "",
     email: "",
-    thumbnail: "",
-    images: [],
+    thumbnail_image: "",
+    other_images: [],
     condition: Condition.Good,
     date: new Date().toISOString(),
     class: "",
@@ -31,7 +54,7 @@ export default function CreateListing() {
 
   const phoneRegex = /^[0-9]{10}$/;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setPhoneError(false);
     setFormError("");
 
@@ -41,7 +64,7 @@ export default function CreateListing() {
       !listing.price ||
       !listing.condition ||
       !listing.phone ||
-      listing.images.length === 0
+      listing.other_images.length === 0
     ) {
       setFormError("Please fill out all fields.");
       return;
@@ -53,8 +76,29 @@ export default function CreateListing() {
       setFormError("Please enter a valid 10-digit phone number.");
       return;
     }
-
-    console.log("Form submitted successfully:", listing);
+    
+    try {
+      // Convert thumbnail to base64
+      const base64Thumbnail = await blobToBase64(listing.thumbnail_image);
+      
+      // Convert all images to base64
+      const base64Images = await Promise.all(
+        listing.other_images.map(image => blobToBase64(image))
+      );
+      
+      // Create new listing object with base64 converted images
+      const listingWithBase64 = {
+        ...listing,
+        thumbnail_image: base64Thumbnail,
+        other_images: base64Images
+      };
+      
+      console.log("Form submitted successfully:", listingWithBase64);
+      createListing(listingWithBase64);
+    } catch (error) {
+      setFormError("Error converting images. Please try again.");
+      console.error("Error converting images to base64:", error);
+    }
   };
 
   const handleChange = (
@@ -99,7 +143,8 @@ export default function CreateListing() {
       );
       setListing((prevListing) => ({
         ...prevListing,
-        images: imageFiles,
+        other_images: imageFiles,
+        thumbnail_image: imageFiles[0] || "",
       }));
     }
   };
@@ -108,6 +153,11 @@ export default function CreateListing() {
     setIsPopupOpen(false);
     setSelectedListing(null);
   };
+  function openListing(listing: Listing): void {
+    throw new Error("Function not implemented.");
+  }
+
+  console.log("THUMBNAIL: ", listing.thumbnail_image);
 
   const options = Object.entries(Condition).map(([key, value]) => ({
     label: value,
@@ -199,9 +249,11 @@ export default function CreateListing() {
         >
           <ImageComponent
             h="h-96"
+            
             img={
-              listing.thumbnail ? listing.thumbnail : "/placeholderparrot.jpg"
-            }
+              
+              listing.thumbnail_image ? listing.thumbnail_image : "/placeholderparrot.jpg"
+            } // Use uploaded image or placeholder
           />
           <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
           <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
@@ -258,14 +310,10 @@ export default function CreateListing() {
                 <ImageComponent
                   w="w-full"
                   h="h-full"
-                  img={
-                    selectedListing.thumbnail
-                      ? selectedListing.thumbnail
-                      : "/placeholderparrot.jpg"
-                  }
+                  img={selectedListing.thumbnail_image ? selectedListing.thumbnail_image : "/placeholderparrot.jpg"}
                 />
               </div>
-              {selectedListing.images.map((img, idx) => (
+              {selectedListing.other_images.map((img, idx) => (
                 <div key={idx}>
                   <ImageComponent w="w-full" h="h-80" img={img} />
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Range, getTrackBackground } from "react-range";
 import { useSearchParams, useRouter } from "next/navigation"; // Import useSearchParams and useRouter
+import Image from "next/image";
 
 interface PriceRangeSliderProps {
   min: number;
@@ -43,7 +44,10 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
     // Update the URL parameters using the next/navigation router
     router.replace(`?${params.toString()}`);
   };
-
+  const resetSlider = () => {
+    handleChange([0,1000])
+  };
+ 
   return (
     <div className="w-full p-4">
       <div className="mb-4 text-center">
@@ -56,7 +60,7 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
         step={step}
         min={min}
         max={max}
-        onChange={handleChange}
+        onChange={handleChange}       
         renderTrack={({ props, children }) => {
           return (
             <div
@@ -78,15 +82,14 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
         renderThumb={({ props, index }) => (
           <div
             {...props}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 shadow-lg"
+            className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 shadow-lg"
           >
-            <div className="absolute -top-7 rounded bg-blue-500 px-2 py-1 text-xs font-semibold text-white">
-              ${values[index]}
-            </div>
           </div>
         )}
       />
+      <p onClick={resetSlider} className="m-5 ml-36 relative flex h-6 w-20 items-center justify-center rounded bg-gray-400 shadow-lg font-semibold text-gray-700"><Image src="/reset.png" width={16} height={16} alt="Reset" className="mr-2"/>Reset</p>
     </div>
+    
   );
 };
 

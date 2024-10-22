@@ -21,23 +21,21 @@ export async function fetchFilteredListings(
     });
 
     if (response.status === 200) {
-      const listings: Listing[] = response.data.listings.map(
-        (listing: any) => ({
-          uuid: listing.id,
-          title: listing.title,
-          description: listing.description,
-          price: listing.price,
-          phone: listing.phone_number,
-          email: listing.email_address,
-          thumbnail: listing.thumbnail_image,
-          images: listing.other_images || [],
-          condition: listing.condition as Condition,
-          date: listing.date,
-          class: listing.class_type,
-          saved: listing.saved,
-        }),
-      );
-      console.log(listings);
+      const listings: Listing[] = response.data.listings.map((listing: any) => ({
+        uuid: listing.id,
+        title: listing.title,
+        description: listing.description,
+        price: listing.price,
+        phone: listing.phone_number,
+        email: listing.email_address,
+        thumbnail_image: listing.thumbnail_image,
+        other_images: listing.other_images || [],
+        condition: listing.condition as Condition,
+        date: listing.date,
+        class: listing.class_type,
+        saved: listing.saved
+      }));
+      console.log(listings)
 
       return listings;
     } else {
@@ -76,22 +74,20 @@ export async function fetchUserListings(
       );
 
       if (response.status === 200) {
-        const listings: Listing[] = response.data.listings.map(
-          (listing: any) => ({
-            uuid: listing.id,
-            title: listing.title,
-            description: listing.description,
-            price: listing.price,
-            phone: listing.phone_number,
-            email: listing.email_address,
-            thumbnail: listing.thumbnail_image,
-            images: listing.other_images || [],
-            condition: listing.condition as Condition,
-            date: listing.date,
-            class: listing.class_type,
-            saved: listing.saved,
-          }),
-        );
+        const listings: Listing[] = response.data.listings.map((listing: any) => ({
+          uuid: listing.id,
+          title: listing.title,
+          description: listing.description,
+          price: listing.price,
+          phone: listing.phone_number,
+          email: listing.email_address,
+          thumbnail_image: listing.thumbnail_image,
+          images: listing.other_images || [],
+          condition: listing.condition as Condition,
+          date: listing.date,
+          class: listing.class_type,
+          saved: listing.saved
+        }));
 
         return listings;
       } else {
@@ -133,22 +129,20 @@ export async function fetchSavedListings(
       );
 
       if (response.status === 200) {
-        const listings: Listing[] = response.data.listings.map(
-          (listing: any) => ({
-            uuid: listing.id,
-            title: listing.title,
-            description: listing.description,
-            price: listing.price,
-            phone: listing.phone_number,
-            email: listing.email_address,
-            thumbnail: listing.thumbnail_image,
-            images: listing.other_images || [],
-            condition: listing.condition as Condition,
-            date: listing.date,
-            class: listing.class_type,
-            saved: listing.saved,
-          }),
-        );
+        const listings: Listing[] = response.data.listings.map((listing: any) => ({
+          uuid: listing.id,
+          title: listing.title,
+          description: listing.description,
+          price: listing.price,
+          phone: listing.phone_number,
+          email: listing.email_address,
+          thumbnail_image: listing.thumbnail_image,
+          images: listing.other_images || [],
+          condition: listing.condition as Condition,
+          date: listing.date,
+          class: listing.class_type,
+          saved: listing.saved
+        }));
 
         return listings;
       } else {
@@ -187,9 +181,36 @@ export async function cooltoggleSaved(uuid: string, saved: boolean) {
     if (response.status === 200) {
       return !saved;
     }
-    throw new Error("Failed to toggle saved");
+    throw new Error('Failed to toggle saved');
   } catch (error) {
-    console.error("Error toggling saved status:", error);
+    console.error('Error toggling saved status:', error);
+    throw error;
+  }
+}
+
+export async function createListing(listing: Listing) {
+  try {
+    const response = await axios.post('http://127.0.0.1:5000/create-listing', {
+      title: listing.title,
+      description: listing.description,
+      price: listing.price,
+      phone_number: listing.phone,
+      email_address: listing.email,
+      thumbnail_image: listing.thumbnail_image,
+      other_images: listing.other_images,
+      condition: listing.condition,
+      class_type: "english", // JOSHUA ADD THIS
+    }, {
+      withCredentials: true
+    });
+    console.log(response)
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Failed to create listing');
+    }
+  } catch (error) {
+    console.error('Error creating listing:', error);
     throw error;
   }
 }
