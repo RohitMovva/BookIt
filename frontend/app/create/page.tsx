@@ -21,16 +21,13 @@ export default function CreateListing() {
   });
 
   const [phoneError, setPhoneError] = useState(false); // Track phone validity
-  const [emailError, setEmailError] = useState(false); // Track email validity
   const [formError, setFormError] = useState(""); // Track form submission error
 
   const phoneRegex = /^[0-9]{10}$/; // Simple validation for 10-digit phone numbers
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
 
   const handleSubmit = () => {
     // Reset errors
     setPhoneError(false);
-    setEmailError(false);
     setFormError("");
 
     // Check if all fields are filled
@@ -39,7 +36,6 @@ export default function CreateListing() {
       !listing.description ||
       !listing.price ||
       !listing.phone ||
-      !listing.email ||
       !listing.condition ||
       listing.images.length === 0
     ) {
@@ -51,13 +47,6 @@ export default function CreateListing() {
     if (!phoneRegex.test(listing.phone)) {
       setPhoneError(true);
       setFormError("Please enter a valid 10-digit phone number.");
-      return;
-    }
-
-    // Validate email
-    if (!emailRegex.test(listing.email)) {
-      setEmailError(true);
-      setFormError("Please enter a valid email address.");
       return;
     }
 
@@ -89,15 +78,6 @@ export default function CreateListing() {
       setPhoneError(true); // Invalid phone number
     } else {
       setPhoneError(false); // Valid phone number
-    }
-  };
-
-  const handleEmailBlur = () => {
-    // Validate email on blur
-    if (!emailRegex.test(listing.email)) {
-      setEmailError(true); // Invalid email
-    } else {
-      setEmailError(false); // Valid email
     }
   };
 
@@ -157,18 +137,6 @@ export default function CreateListing() {
           onBlur={handlePhoneBlur} // Validate on blur
         />
         {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
-        {/* Error message */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className={`input w-full ${emailError ? "border-red-500" : "input-bordered"}`} // Conditionally apply red border if invalid
-          value={listing.email}
-          onChange={handleChange}
-          onBlur={handleEmailBlur} // Validate on blur
-        />
-        {emailError && <p className="text-red-500">Invalid email address</p>}{" "}
-        {/* Error message */}
         <select
           name="condition"
           className="select select-bordered w-full"
