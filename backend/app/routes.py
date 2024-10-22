@@ -452,6 +452,111 @@ def get_user_listings(user_id):
     
     return jsonify(response), 200
 
+@bp.route('/get-saved-listings/<int:user_id>', methods=['GET'])
+def get_saved_listings(user_id):
+    # Verify user exists
+    user = User.query.get_or_404(user_id)
+    
+    # Get basic pagination parameters
+    query = request.args.get('query', '')
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 20))
+    
+    # Get sort parameters
+    sort_by = request.args.get('sort_by', 'date')
+    sort_order = request.args.get('sort_order', 'desc')
+    
+    # Get price range parameters
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+    
+    # Get date range parameters
+    start_date = request.args.get('start_date')  # Format: YYYY-MM-DD
+    end_date = request.args.get('end_date')      # Format: YYYY-MM-DD
+    
+    # Initialize the query with saved listings for the user
+    listings_query = user.saved_listings
+    
+    # Apply search filter if query parameter exists
+    if query:
+        listings_query = listings_query.filter(
+            or_(
+                Listing.title.ilike(f'%{query}%'),
+                Listing.description.ilike(f'%{query}%'),
+                Listing.class_type.ilike(f'%{query}%')
+            )
+        )
+    
+    # Apply price range filter
+    if min_price is not None:
+        listings_query = listings_query.filter(Listing.price >= min_price)
+    if max_price is not None:
+        listings_query = listings_query.filter(Listing.price <= max_price)
+    
+    # Apply date range filter with DateTime objects
+    if start_date:
+        try:
+            start_datetime = datetime.strptime(start_date, '%Y-%m-%d')
+            start_datetime = start_datetime.replace(hour=0, minute=0, second=0)
+            listings_query = listings_query.filter(Listing.date >= start_datetime)
+        except ValueError:
+            return jsonify({"error": "Invalid start_date format. Use YYYY-MM-DD"}), 400
+    
+    if end_date:
+        try:
+            end_datetime = datetime.strptime(end_date, '%Y-%m-%d')
+            end_datetime = end_datetime.replace(hour=23, minute=59, second=59)
+            listings_query = listings_query.filter(Listing.date <= end_datetime)
+        except ValueError:
+            return jsonify({"error": "Invalid end_date format. Use YYYY-MM-DD"}), 400
+    
+    # Apply sorting
+    sort_options = {
+        'price_asc': Listing.price.asc(),
+        'price_desc': Listing.price.desc(),
+        'date_desc': Listing.date.desc(),
+        'date_asc': Listing.date.asc(),
+    }
+    
+    # Combine sort_by and sort_order to get the sort key
+    sort_key = f"{sort_by}_{sort_order}"
+    if sort_key in sort_options:
+        listings_query = listings_query.order_by(sort_options[sort_key])
+    
+    # Apply pagination
+    paginated_listings = listings_query.paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+    
+    # Get the current filter state
+    active_filters = {
+        "price_range": {
+            "min": min_price,
+            "max": max_price
+        },
+        "date_range": {
+            "start": start_date,
+            "end": end_date
+        }
+    }
+    
+    # Prepare response
+    response = {
+        "listings": [listing.to_dict() for listing in paginated_listings.items],
+        "total_pages": paginated_listings.pages,
+        "current_page": page,
+        "total_items": paginated_listings.total,
+        "sort_by": sort_by,
+        "sort_order": sort_order,
+        "available_sorts": list(sort_options.keys()),
+        "active_filters": active_filters,
+        "user_id": user_id
+    }
+    
+    return jsonify(response), 200
+
 @bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
 def update_listing(listing_id):
     data = request.json

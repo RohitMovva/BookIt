@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFilteredListings, fetchUserListings } from "../../lib/data";
+import { fetchFilteredListings, fetchUserListings, fetchSavedListings } from "../../lib/data";
 import { Listing } from "../../lib/definitions";
 import ImageComponent from "../image";
+import { only } from "node:test";
 
-export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
+export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boolean, onlySaved?: boolean }) {
   const [listings, setListings] = useState<Listing[]>([]);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState(false); // State for tooltip visibility
@@ -18,9 +19,16 @@ export default function ListingGallery({ hasUser }: { hasUser: boolean }) {
 
   useEffect(() => {
     const loadListings = async () => {
-      const data = hasUser 
-        ? await fetchUserListings(query, currentPage) 
-        : await fetchFilteredListings(query, currentPage);
+      let data;
+      console.log(onlySaved), console.log(hasUser)
+      if (hasUser) {
+        data = await fetchUserListings(query, currentPage);
+      } else if (onlySaved){
+        data = await fetchSavedListings(query, currentPage) 
+      }
+      else {
+        data = await fetchFilteredListings(query, currentPage);
+      }
       setListings(data);
     };
     loadListings();
