@@ -229,7 +229,7 @@ export default function CreateListing() {
               type="file"
               accept="image/*"
               onChange={handleThumbnailChange}
-              className="file-input file-input-bordered w-full te"
+              className="file-input file-input-bordered te w-full"
             />
             <input
               type="file"
@@ -239,8 +239,9 @@ export default function CreateListing() {
               className="file-input file-input-bordered w-full"
             />
             <Button
-              textColor = "text-white btn btn-primary w-full text-2xl"
-              onClick={handleSubmit} text="Create"
+              textColor="text-white btn btn-primary w-full text-2xl"
+              onClick={handleSubmit}
+              text="Create"
             />
             {formError && <p className="text-red-500">{formError}</p>}{" "}
           </form>
@@ -257,12 +258,12 @@ export default function CreateListing() {
             }}
           >
             <ImageComponent
-              h="h-[30rem]"
+              h="h-96"
               img={
                 listing.thumbnail_image
                   ? listing.thumbnail_image
                   : "/placeholderparrot.jpg"
-              } // Use uploaded image or placeholder
+              }
             />
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
@@ -312,10 +313,10 @@ export default function CreateListing() {
             onClick={closePopup}
           >
             {/* Content */}
-            <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
+            <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white py-6 shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
               {/* Images (left) */}
-              <div className="order-last mx-4 flex-col border-r md:order-first md:w-1/2 md:overflow-y-auto">
-                <div className="h-96">
+              <div className="order-last mx-4 flex-col justify-items-center md:order-first md:mx-10 md:w-1/2 md:overflow-y-auto">
+                <div className="mb-6 h-96 bg-red-500 w-full">
                   <ImageComponent
                     w="w-full"
                     h="h-full"
@@ -327,35 +328,48 @@ export default function CreateListing() {
                   />
                 </div>
                 {selectedListing.other_images.map((img, idx) => (
-                  <div key={idx}>
-                    <ImageComponent w="w-full" h="h-80" img={img} />
+                  <div key={idx} className="mb-6">
+                    <ImageComponent w="w-full" h="h-96" img={img} />
                   </div>
                 ))}
               </div>
               {/* Text (right) */}
-              <div className="w-1/2 p-6 md:overflow-y-auto">
-                <h2 className="mb-2 text-2xl font-semibold">
-                  {selectedListing.title}
-                </h2>
-                <p className="mb-4 text-gray-700">
-                  {selectedListing.description}
-                </p>
-                <p className="mb-4 text-lg font-bold text-blue-600">
-                  ${selectedListing.price}
-                </p>
-                <p className="mb-4 text-sm text-gray-500">
-                  Class: {selectedListing.class}
-                </p>
-                <p className="mb-4 text-sm text-gray-500">
-                  Condition: {selectedListing.condition}
-                </p>
-                <p className="font-semibold">Contact Information:</p>
-                <p className="text-sm text-gray-700">
-                  Phone: {selectedListing.phone}
-                </p>
-                <p className="text-sm text-gray-700">
-                  Email: {selectedListing.email}
-                </p>
+              <div className="grid w-1/2 gap-2 p-6 md:border-l md:border-black md:px-12 md:overflow-y-auto">
+                <div>
+                  <h2 className="mb-2 text-5xl font-semibold">
+                    {selectedListing.title}
+                  </h2>
+                  <p className="mb-4 text-2xl text-gray-700">
+                    {selectedListing.description}
+                  </p>
+                  <div className="flex items-center gap-8">
+                    <p className="w-fit rounded-full bg-blue-800 px-3 py-3 text-center text-xl text-white">
+                      ${selectedListing.price}
+                    </p>
+                    <p className="w-fit rounded-full bg-blue-800 px-3 py-3 text-center text-xl text-white">
+                      {selectedListing.condition}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-3xl">Class:</p>
+                  <p className="text-2xl">{selectedListing.class}</p>
+                </div>
+                <div>
+                  <p className="text-3xl">Condition:</p>
+                  <p className="text-2xl">{selectedListing.condition}</p>
+                </div>
+                <div className="">
+                  <p className="text-3xl">Contact Information</p>
+                  <div>
+                    <p className="text-2xl text-gray-700">
+                      Phone: {selectedListing.phone}
+                    </p>
+                    <p className="text-2xl text-gray-700">
+                      Email: {selectedListing.email}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
