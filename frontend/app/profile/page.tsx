@@ -8,16 +8,20 @@ import { useCallback } from "react";
 import { deleteCookie } from 'cookies-next';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
+import Input from "../ui/input";
+import TopBar from "../ui/home/top-bar";
+import { deleteUser } from "../lib/data";
+import { updateUserEmail, updateUserPhoneNumber } from "../lib/data";
 
 const API_BASE_URL = "http://127.0.0.1:5000";
 
 const SettingsPage: React.FC = () => {
   const [email, setEmail] = useState("user@example.com");
-  const [phone, setPhone] = useState("123-456-7890");
+  const [phone, setPhone] = useState("");
   const [theme, setTheme] = useState("system");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
-  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  // const [isEditingEmail, setIsEditingEmail] = useState(false);
+  // const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isDeleteConfirmationVisible, setIsDeleteConfirmationVisible] =
     useState(false);
   const [isCodeEntryVisible, setIsCodeEntryVisible] = useState(false);
@@ -25,13 +29,32 @@ const SettingsPage: React.FC = () => {
   const [code, setCode] = useState("");
   const [tooltipMessage, setTooltipMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Create a ref for the file input
+  const [phoneError, setPhoneError] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
+
+  const phoneRegex = /^[0-9]{10}$/;
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    updateUserEmail(e.target.value);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
+    if (e.target.value.length < 10) {
+      setPhoneError(true);
+      return;
+    }
+    updateUserPhoneNumber(e.target.value);
+  };
+
+  const handlePhoneBlur = () => {
+    if (phone && !phoneRegex.test(phone)) {
+      setPhoneError(true);
+    } else {
+      setPhoneError(false);
+    }
   };
 
   const handleThemeChange = (newTheme: string) => {
@@ -63,6 +86,8 @@ const SettingsPage: React.FC = () => {
     const correctCode = "123456"; // Simulated correct code
     if (code === correctCode) {
       // Add your delete account logic here
+      console.log("Deleting account...")
+      deleteUser(); // Call the function to delete account
       alert("Account deleted");
       setIsCodeEntryVisible(false);
       setEmailToDelete("");
@@ -103,7 +128,7 @@ const SettingsPage: React.FC = () => {
 
   return (
     
-    <div className="w-full h-full justify-center">
+    <><div className="w-full h-full justify-center">
       {/*Top bar*/}
       <nav className="sticky top-0 z-10 grid h-1/20 w-full items-center border-b border-blue-100 bg-white">
         <ul className="flex h-16 justify-between px-6 md:px-10">
@@ -116,7 +141,7 @@ const SettingsPage: React.FC = () => {
             </li>
           </div>
           <div className="flex h-full items-center space-x-5 justify-center">
-            <h1 className = "text-4xl font-bold mx-3">Settings</h1>
+            <h1 className="text-4xl font-bold mx-3">Settings</h1>
           </div>
           <div className="flex h-full items-center space-x-5">
             <li className="transition-all duration-300 hover:-translate-y-1">
@@ -131,8 +156,7 @@ const SettingsPage: React.FC = () => {
                   <img
                     src={profilePhoto}
                     alt="Profile"
-                    className ="h-10 w-10 rounded-full"
-                  />
+                    className="h-10 w-10 rounded-full" />
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-gray-300" />
                 )}
@@ -141,41 +165,40 @@ const SettingsPage: React.FC = () => {
           </div>
         </ul>
       </nav>
-      <div className = "grid grid-cols-5 h-screen">
+      <div className="grid grid-cols-5 h-screen">
         {/*Side bar*/}
-        <div className = "col-span-1 border-r border-blue-100 bg-white grid grid-rows-4">
-          <h2 className = "text-2xl ml-12 my-8">Profile:</h2>
-          <h2 className = "text-2xl ml-12 my-8">Account Details:</h2>
-          <h2 className = "text-2xl ml-12 my-8">Preferences:</h2>
-          <h2 className = "text-2xl ml-12 my-8">Actions:</h2>
+        <div className="col-span-1 border-r border-blue-100 bg-white grid grid-rows-4">
+          <h2 className="text-2xl ml-12 my-8">Profile:</h2>
+          <h2 className="text-2xl ml-12 my-8">Account Details:</h2>
+          <h2 className="text-2xl ml-12 my-8">Preferences:</h2>
+          <h2 className="text-2xl ml-12 my-8">Actions:</h2>
         </div>
         {/*Main info*/}
-        <div className = "col-span-4 grid grid-cols-2 grid-rows-4 w-4/5">
+        <div className="col-span-4 grid grid-cols-2 grid-rows-4 w-4/5">
           {profilePhoto ? (
             <img
               src={profilePhoto}
               alt="Profile"
-              className="mx-auto my-10 h-48 w-48 rounded-full"
-            />
+              className="mx-auto my-10 h-48 w-48 rounded-full" />
           ) : (
             <div className="mx-auto my-10 h-48 w-48 rounded-full bg-gray-300"></div>
           )}
           <input
-          type="file"
-          accept="image/*"
-          onChange={handlePhotoUpload}
-          ref={fileInputRef}
-          style={{ display: "none" }} // Hide the default file input
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            ref={fileInputRef}
+            style={{ display: "none" }} // Hide the default file input
           />
-          <div className = "my-10 col-span-1 mx-auto">
-            <div className = "my-8"><Button text="Upload Photo" onClick={triggerFileInput} /></div>
-            
-            <div className = "my-8"><Button text="Remove Photo" onClick={() => setProfilePhoto(null)}/></div>
+          <div className="my-10 col-span-1 mx-auto">
+            <div className="my-8"><Button text="Upload Photo" onClick={triggerFileInput} /></div>
+
+            <div className="my-8"><Button text="Remove Photo" onClick={() => setProfilePhoto(null)} /></div>
           </div>
-          <div className = "col-span-2 grid grid-rows-2">
-            <div className = "flex mx-auto">
+          <div className="col-span-2 grid grid-rows-2">
+            <div className="flex mx-auto">
               <label className="my-auto text-xl mx-4">Email: </label>
-              <div className ="my-auto">
+              <div className="my-auto">
                 {isEditingEmail ? (
                   <input
                     type="text"
@@ -183,32 +206,30 @@ const SettingsPage: React.FC = () => {
                     onChange={handleEmailChange}
                     onBlur={() => setIsEditingEmail(false)}
                     className="border p-1 my-auto"
-                    autoFocus
-                  />
+                    autoFocus />
                 ) : (
                   <div onClick={() => setIsEditingEmail(true)}>{email}</div>
                 )}
               </div>
             </div>
-            <div className = "flex mx-auto">
+            <div className="flex mx-auto">
               <label className="my-auto text-xl mx-4">Phone: </label>
-              <div className ="my-auto">
-              {isEditingPhone ? (
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  onBlur={() => setIsEditingPhone(false)}
-                  className="border p-1"
-                  autoFocus
-                />
-              ) : (
-                <div onClick={() => setIsEditingPhone(true)}>{phone}</div>
-              )}
+              <div className="my-auto">
+                {isEditingPhone ? (
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    onBlur={() => setIsEditingPhone(false)}
+                    className="border p-1"
+                    autoFocus />
+                ) : (
+                  <div onClick={() => setIsEditingPhone(true)}>{phone}</div>
+                )}
               </div>
             </div>
           </div>
-          <div className = "col-span-2 items-center flex mx-auto">
+          <div className="col-span-2 items-center flex mx-auto">
             <label className="my-auto text-xl mx-4">Theme: </label>
             <div className="flex space-x-2">
               <button
@@ -231,12 +252,11 @@ const SettingsPage: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className = "col-span-2 items-center flex grid grid-cols-2">
-            <div className = "mx-auto"><Button text="Sign out" onClick={handleSignout} /></div>
-            <div className = "mx-auto"><Button
+          <div className="col-span-2 items-center flex grid grid-cols-2">
+            <div className="mx-auto"><Button text="Sign out" onClick={handleSignout} /></div>
+            <div className="mx-auto"><Button
               text="Delete Account"
-              onClick={() => setIsDeleteConfirmationVisible(true)}
-            /></div>
+              onClick={() => setIsDeleteConfirmationVisible(true)} /></div>
 
             {isDeleteConfirmationVisible && (
               <div className="mt-4 rounded border border-red-500 p-2">
@@ -246,8 +266,7 @@ const SettingsPage: React.FC = () => {
                   <Button
                     text="Cancel"
                     onClick={() => setIsDeleteConfirmationVisible(false)}
-                    bgColor="bg-gray-300"
-                  />
+                    bgColor="bg-gray-300" />
                 </div>
               </div>
             )}
@@ -259,15 +278,13 @@ const SettingsPage: React.FC = () => {
                   type="text"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  className="border p-1"
-                />
+                  className="border p-1" />
                 <div className="mt-2">
                   <Button text="Submit" onClick={handleCodeSubmit} />
                   <Button
                     text="Cancel"
                     onClick={() => setIsCodeEntryVisible(false)}
-                    bgColor="bg-gray-300"
-                  />
+                    bgColor="bg-gray-300" />
                 </div>
                 {tooltipMessage && <p className="text-red-500">{tooltipMessage}</p>}
               </div>
@@ -276,133 +293,68 @@ const SettingsPage: React.FC = () => {
         </div>
       </div>
       {/* <div className="mt-4">
-        <h2 className="text-xl">Profile Photo</h2>
-        {profilePhoto ? (
-          <img
-            src={profilePhoto}
-            alt="Profile"
-            className="h-32 w-32 rounded-full"
-          />
-        ) : (
-          <div className="h-32 w-32 rounded-full bg-gray-300"></div>
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handlePhotoUpload}
-          ref={fileInputRef}
-          style={{ display: "none" }} // Hide the default file input
+      <h2 className="text-xl">Profile Photo</h2>
+      {profilePhoto ? (
+        <img
+          src={profilePhoto}
+          alt="Profile"
+          className="h-32 w-32 rounded-full"
         />
-        <Button text="Upload Photo" onClick={triggerFileInput} />
-        <button className="ml-2" onClick={() => setProfilePhoto(null)}>
-          Remove Photo
-        </button>
-      </div> */}
+      ) : (
+        <div className="h-32 w-32 rounded-full bg-gray-300"></div>
+      )}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        ref={fileInputRef}
+        style={{ display: "none" }} // Hide the default file input
+      />
+      <Button text="Upload Photo" onClick={triggerFileInput} />
+      <button className="ml-2" onClick={() => setProfilePhoto(null)}>
+        Remove Photo
+      </button>
+    </div> */}
 
       {/* <div className="flex mt-4">
-        <h2 className="text-xl">Account Details</h2>
-        <div className="mt-2">
-          <label>Email:</label>
-          {isEditingEmail ? (
-            <input
-              type="text"
-              value={email}
-              onChange={handleEmailChange}
-              onBlur={() => setIsEditingEmail(false)}
-              className="border p-1"
-              autoFocus
-            />
-          ) : (
-            <div onClick={() => setIsEditingEmail(true)}>{email}</div>
-          )}
-        </div>
-        <div className="mt-2">
-          <label>Phone Number:</label>
-          {isEditingPhone ? (
-            <input
-              type="text"
-              value={phone}
-              onChange={handlePhoneChange}
-              onBlur={() => setIsEditingPhone(false)}
-              className="border p-1"
-              autoFocus
-            />
-          ) : (
-            <div onClick={() => setIsEditingPhone(true)}>{phone}</div>
-          )}
-        </div>
-      </div> */}
-
-      {/* <div className="flex mt-4">
-        <h2 className="text-xl">Preferences</h2>
-        <div>
-          <label>Theme:</label>
-          <div className="flex space-x-2">
-            <button
-              className={`border p-2 ${theme === "system" ? "bg-gray-200" : ""}`}
-              onClick={() => handleThemeChange("system")}
-            >
-              Sync with System
-            </button>
-            <button
-              className={`border p-2 ${theme === "light" ? "bg-gray-200" : ""}`}
-              onClick={() => handleThemeChange("light")}
-            >
-              Light
-            </button>
-            <button
-              className={`border p-2 ${theme === "dark" ? "bg-gray-200" : ""}`}
-              onClick={() => handleThemeChange("dark")}
-            >
-              Dark
-            </button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div className="flex mt-4">
-        <Button text="Logout" onClick={() => alert("Logged out")} />
-        <Button
-          text="Delete Account"
-          onClick={() => setIsDeleteConfirmationVisible(true)}
-        />
-      </div> */}
-
-      {/* {isDeleteConfirmationVisible && (
-        <div className="mt-4 rounded border border-red-500 p-2">
-          <h3>Are you sure you want to delete your account?</h3>
-          <div className="mt-2">
-            <Button text="Yes" onClick={handleDeleteAccount} />
-            <Button
-              text="Cancel"
-              onClick={() => setIsDeleteConfirmationVisible(false)}
-              bgColor="bg-gray-300"
-            />
-          </div>
-        </div>
-      )} */}
-
-      {/* {isCodeEntryVisible && (
-        <div className="mt-4 rounded border border-yellow-500 p-2">
-          <h3>Enter the code sent to your email:</h3>
+      <h2 className="text-xl">Account Details</h2>
+      <div className="mt-2">
+        <label>Email:</label>
+        {isEditingEmail ? (
           <input
             type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={email}
+            onChange={handleEmailChange}
+            onBlur={() => setIsEditingEmail(false)}
             className="border p-1"
+            autoFocus
           />
-          <div className="mt-2">
-            <Button text="Submit" onClick={handleCodeSubmit} />
-            <Button
-              text="Cancel"
-              onClick={() => setIsCodeEntryVisible(false)}
-              bgColor="bg-gray-300"
-            />
-          </div>
-          {tooltipMessage && <p className="text-red-500">{tooltipMessage}</p>}
-        </div>
-      )} */}
-    </div>
+        ) : (
+          <div onClick={() => setIsEditingEmail(true)}>{email}</div>
+        )} */}
+    </div><div className="mt-2">
+        <Input
+          type="number"
+          name="phone"
+          placeholder="Phone"
+          className={`input w-full [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${phoneError ? "border-red-500" : "input-bordered"}`}
+          value={phone}
+          onChange={handlePhoneChange}
+          onBlur={handlePhoneBlur} />
+        {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
+        {/* {isEditingPhone ? (
+    <input
+      type="text"
+      value={phone}
+      onChange={handlePhoneChange}
+      onBlur={() => setIsEditingPhone(false)}
+      className="border p-1"
+      autoFocus
+    />
+  ) : (
+    <div onClick={() => setIsEditingPhone(true)}>{phone}</div>
+  )} */}
+      </div></>
   );
 };
 

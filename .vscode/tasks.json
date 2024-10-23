@@ -59,7 +59,7 @@
       "label": "run flask app",
       "type": "shell",
       "hide": true,
-      "command": "flask run",
+      "command": "python -m flask run",
       "options": {
         "cwd": "backend"
       }

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useDebouncedCallback } from "use-debounce";
@@ -11,18 +11,27 @@ import { fetchUserProfilePicture } from "../../lib/data";
 import Button from "../button";
 import DropdownButton from "../button-dropdown";
 import PriceRangeSlider from "./price-range-slider";
+import StyledSelect from "../select";
+import { Condition } from "../../lib/definitions";
 
 export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen(!isOpen);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
     null,
   );
+
+  const conditionSearchParams = searchParams.get("condition") || "All";
+
+  const [condition, setCondition] = useState(conditionSearchParams);
 
   const arr = pathname.split("/");
   const searchDefault = "Search " + arr[arr.length - 1];
@@ -48,34 +57,58 @@ export default function HomeLayout({
     300, // Debounce delay in milliseconds
   );
 
+  const options = [
+    { label: "All", value: "All" }, // Add "All" as the first option
+    ...Object.entries(Condition).map(([key, value]) => ({
+      label: value,
+      value: key,
+    })),
+  ];
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === "All") {
+      params.delete("condition");
+    } else {
+      params.set("condition", value);
+    }
+    setCondition(value);
+    replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="scrollbar-track-white text-pretty">
       {/* Top bar */}
       <nav className="sticky top-0 z-10 grid h-20 w-full items-center border-b border-blue-100 bg-white">
         <ul className="flex h-16 justify-between px-6 md:px-10">
+          <Link href={"/"}>
+            <div className="flex h-full cursor-pointer items-center space-x-5">
+              <li>
+                <a href="/">
+                  <TempLogo />
+                </a>
+              </li>
+              <li>
+                <a href="/">
+                  <p className="text-3xl">bookit</p>
+                </a>
+              </li>
+            </div>
+          </Link>
           <div className="flex h-full items-center space-x-5">
-            <li>
-              <a href="/"><TempLogo /></a>
-            </li>
-            <li>
-              <a href="/"><p className="text-3xl">bookit</p></a>
-            </li>
-          </div>
-          <div className="flex h-full items-center space-x-5">
-            <li className="transition-all duration-300 hover:-translate-y-1">
-              <Link href="/settings">
-                <Image src="/setting.png" alt="" width={32} height={32} />
-              </Link>
-            </li>
             <li className="transition-all duration-300 hover:-translate-y-1">
               <Link href="/profile">
                 {/* use image else use placeholder */}
                 {profilePictureUrl ? (
                   <Image
                     src={profilePictureUrl}
-                    alt="Profile"
-                    width={32}
-                    height={32}
+                    alt="Profile picture"
+                    width={42}
+                    height={42}
+                    className="rounded-full"
                   />
                 ) : (
                   <div className="h-8 w-8 rounded-full bg-gray-300" />
@@ -106,7 +139,7 @@ export default function HomeLayout({
             />
             <SidebarItem
               img="/list.png"
-              text="Listings"
+              text="My Listings"
               href="/listings"
               pathname={pathname}
             />
@@ -127,17 +160,13 @@ export default function HomeLayout({
           }`}
         >
           {/* Filters */}
-          <section className="grid h-full w-72 gap-4 p-2 md:mt-4 md:h-fit">
-            <DropdownButton
-              text="Menu"
-              options={[
-                { label: "Profile", href: "/profile" },
-                { label: "Settings", href: "/settings" },
-                {
-                  label: "Logout",
-                },
-              ]}
-              isOpen={isOpen}
+          <section className="grid h-fit w-72 items-center justify-center gap-4 md:mt-4 md:items-start">
+            <p>Condition:</p>
+            <StyledSelect
+              name="condition"
+              value={condition}
+              onChange={handleChange}
+              options={options}
             />
             <PriceRangeSlider
               min={0}
@@ -167,7 +196,7 @@ export default function HomeLayout({
             text="Filters"
             onClick={toggleSidebar}
             img="/filter.png"
-          isOpen={isOpen}
+            isOpen={isOpen}
           />
           {children}
         </div>

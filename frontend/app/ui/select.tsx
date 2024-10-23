@@ -5,7 +5,7 @@ interface SelectProps {
   name: string;
   value: string;
   options: { label: string; value: string }[];
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
 }
 
@@ -18,23 +18,26 @@ const StyledSelect: React.FC<SelectProps> = ({
 }) => {
   return (
     <div className="relative w-full">
+      {/* Select button */}
       <select
         name={name}
         value={value}
         onChange={onChange}
-        className={`block h-12 w-full cursor-pointer appearance-none rounded-xl border border-gray-400 bg-white px-4 py-2 focus:border-blue-500 focus:outline-none ${className}`}
+        className={`block h-12 w-full cursor-pointer appearance-none rounded-xl border border-gray-400 bg-white px-4 py-2 pr-6 hover:bg-gray-50 focus:bg-gray-200 focus:outline-none ${className}`} // Background color only applies to the select button
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="bg-white">
             {option.label}
           </option>
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+
+      {/* Dropdown arrow */}
+      <div className="absolute right-3 top-1/2 -translate-y-1/2">
         <Image
           src="/caret-down-black.png"
           alt="Caret down"
-          width={12}    
+          width={12}
           height={12}
         />
       </div>

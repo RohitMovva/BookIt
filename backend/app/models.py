@@ -13,6 +13,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=True)
     name = db.Column(db.String(120), nullable=False)
     picture = db.Column(db.String(255))
+    phone_number = db.Column(db.String(20), nullable=True)  # New field
     listings = db.relationship('Listing', backref='owner', lazy='dynamic')
 
     def to_dict(self):
@@ -22,12 +23,12 @@ class User(db.Model):
             'email': self.email,
             'username': self.username,
             'name': self.name,
-            'picture': self.picture
+            'picture': self.picture,
+            'phone_number': self.phone_number  # Added to dictionary
         }
 
     def __repr__(self):
         return f'<User {self.username}>'
-
 # Association table for saved listings
 saved_listings = db.Table('saved_listings',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),

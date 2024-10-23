@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFilteredListings, fetchUserListings, fetchSavedListings, cooltoggleSaved } from "../../lib/data";
+import { fetchFilteredListings, fetchUserListings, fetchSavedListings, cooltoggleSaved, cooldeleteListing } from "../../lib/data";
 import { Listing } from "../../lib/definitions";
 import ImageComponent from "../image";
 import { only } from "node:test";
@@ -15,9 +15,14 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
   const [tooltipVisible, setTooltipVisible] = useState(false); // State for tooltip visibility
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
+  const min_price = searchParams.get("min") || "";
+  const max_price = searchParams.get("max") || "";
+  const sort_type = searchParams.get("sort") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
-  // const user = null;
 
+  const pathname = usePathname();
+  const router = useRouter();
+  
   useEffect(() => {
     const loadListings = async () => {
       let data;
@@ -28,14 +33,17 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
         data = await fetchSavedListings(query, currentPage) 
       }
       else {
-        data = await fetchFilteredListings(query, currentPage);
+        const sort_by = "price";
+        const sort_order = sort_type === "low" ? "asc" : sort_type === "high" ? "desc" : "";
+        console.log("Sort by and sort order", sort_by, sort_order)
+        data = await fetchFilteredListings(query, currentPage, Number(min_price), Number(max_price), sort_by, sort_order);
       }
       console.log(data)
       setListings(data);
       console.log("Listings: ", listings)
     };
     loadListings();
-  }, [query]);
+  }, [query, min_price, max_price, sort_type]);
 
   const openListing = (listing: Listing) => setSelectedListing(listing);
   const closeListing = () => setSelectedListing(null);
@@ -49,6 +57,11 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
   const toggleSaved = (uuid: string, saved: boolean) => {
     return cooltoggleSaved(uuid, saved);
   };
+
+  const deleteListing = async (uuid: string) => {
+    console.log("Deleting listing with uuid: ", uuid);
+    return cooldeleteListing(uuid);
+  }
 
   const handleCopyLink = useCallback((uuid: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -73,7 +86,14 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
             className="relative cursor-pointer rounded-xl"
             onClick={() => openListing(listing)}
           >
-            <ImageComponent img = {listing.thumbnail_image ? listing.thumbnail_image : "/placeholderparrot.jpg"} h="h-96" />
+            <ImageComponent
+              img={
+                listing.thumbnail_image
+                  ? listing.thumbnail_image
+                  : "/placeholderparrot.jpg"
+              }
+              h="h-96"
+            />
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
@@ -96,24 +116,42 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
                       height={28}
                     />
                   </div>
-                  <Image
-                    src={
-                      listing.saved
-                        ? "/bookmark-filled.png"
-                        : "/bookmark-white.png"
-                    }
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleSaved(listing.uuid, listing.saved).then((saved) => {
-                        listing.saved = saved;
-                        setListings([...listings]);
-                      });
-                    }}
-                  />
+                  {pathname !== "/listings" && (
+                    <Image
+                      src={
+                        listing.saved
+                          ? "/bookmark-filled.png"
+                          : "/bookmark-white.png"
+                      }
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSaved(listing.uuid, listing.saved).then((saved) => {
+                          listing.saved = saved;
+                          setListings([...listings]);
+                        });
+                      }}
+                    />
+                  )}
+                  {pathname === "/listings" && (
+                    <Image
+                      src={"/trash-bin-red.png"}
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Deleting listing with uuid: ", listing.uuid);
+                        deleteListing(listing.uuid).then(() => {
+                          setListings([...listings]);
+                        });
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -131,22 +169,29 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
             {/* Images (left) */}
             <div className="w-1/2 overflow-y-auto border-r p-4">
               <div className="h-80">
-                <ImageComponent img = {selectedListing.thumbnail_image ? selectedListing.thumbnail_image : "/placeholderparrot.jpg"} w="w-full" h="h-full" />
+                <ImageComponent
+                  img={
+                    selectedListing.thumbnail_image
+                      ? selectedListing.thumbnail_image
+                      : "/placeholderparrot.jpg"
+                  }
+                  w="w-full"
+                  h="h-full"
+                />
               </div>
               {/* <img
                 src={selectedListing.thumbnail_image}
                 alt={selectedListing.title}
                 className="mb-4 h-48 w-full rounded-md object-cover"
               /> */}
-              {selectedListing.other_images.map((img, idx) => (
+              {(selectedListing.other_images || []).map((img, idx) => (
                 <div>
-                  <ImageComponent img = {img ? img : "/placeholderparrot.jpg"} w="w-full" h="h-80" />
+                  <ImageComponent
+                    img={img ? img : "/placeholderparrot.jpg"}
+                    w="w-full"
+                    h="h-80"
+                  />
                 </div>
-                // <img
-                //   src={img}
-                //   alt={`${selectedListing.title} image ${idx + 1}`}
-                //   className="mb-4 h-48 w-full rounded-md object-cover"
-                // />
               ))}
             </div>
             {/* Text (right) */}
