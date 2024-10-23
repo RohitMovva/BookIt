@@ -100,7 +100,7 @@ export default function HomeLayout({
           </Link>
           <div className="flex h-full items-center space-x-5">
             <li className="transition-all duration-300 hover:-translate-y-1">
-              <Link href="/profile">
+              <Link href="/settings">
                 {/* use image else use placeholder */}
                 {profilePictureUrl ? (
                   <Image
