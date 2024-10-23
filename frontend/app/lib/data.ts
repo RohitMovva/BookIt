@@ -276,3 +276,60 @@ export async function deleteUser() {
     throw error;
   }
 }
+
+export async function updateUserEmail(email: string) {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      console.log(user.data.id)
+      const response = await axios.put(
+        `http://127.0.0.1:5000/users/${user.data.id}`, {
+          email: email
+        }, {
+          withCredentials: true
+        });
+
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to update user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+
+export async function updateUserPhoneNumber(phone_number: string) {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      console.log(user.data.id)
+      const response = await axios.put(
+        `http://127.0.0.1:5000/users/${user.data.id}`, {
+          phone_number: phone_number
+        }, {
+          withCredentials: true
+        });
+
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to update user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+
