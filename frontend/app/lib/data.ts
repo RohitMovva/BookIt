@@ -9,6 +9,8 @@ export async function fetchFilteredListings(
   currentPage: number,
   min_price: number,
   max_price: number,
+  sort_by: string,
+  sort_order: string,
   itemsPerPage: number = 20,
 ): Promise<Listing[]> {
   try {
@@ -17,8 +19,8 @@ export async function fetchFilteredListings(
         query,
         page: currentPage,
         per_page: itemsPerPage,
-        sort_by: "price",
-        sort_order: "desc",
+        sort_by: sort_by,
+        sort_order: sort_order,
         min_price: min_price,
         max_price: max_price,
       },

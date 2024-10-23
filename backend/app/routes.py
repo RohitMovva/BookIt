@@ -264,6 +264,7 @@ def get_listings():
     
     # Combine sort_by and sort_order to get the sort key
     sort_key = f"{sort_by}_{sort_order}"
+    # print("SORT KEY: ", sort_key)
     if sort_key in sort_options:
         listings_query = listings_query.order_by(sort_options[sort_key])
     
