@@ -4,6 +4,12 @@ import Button from "../ui/button"; // Adjust the import path as necessary
 import TempLogo from "../ui/logo";
 import Link from "next/link";
 import Image from "next/image";
+import { useCallback } from "react";
+import { deleteCookie } from 'cookies-next';
+import axios from 'axios';
+import { useRouter } from "next/navigation";
+
+const API_BASE_URL = "http://127.0.0.1:5000";
 
 const SettingsPage: React.FC = () => {
   const [email, setEmail] = useState("user@example.com");
@@ -69,6 +75,31 @@ const SettingsPage: React.FC = () => {
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
+
+  const router = useRouter();
+  
+  const handleSignout = useCallback(async () => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/signout`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = response.data;
+
+      deleteCookie('auth_token');
+
+      router.push("/");
+    } catch (error) {
+      console.error('Signout error:', error);
+    }
+  }, [router]);
 
   return (
     
@@ -201,7 +232,7 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
           <div className = "col-span-2 items-center flex grid grid-cols-2">
-            <div className = "mx-auto"><Button text="Logout" onClick={() => alert("Logged out")} /></div>
+            <div className = "mx-auto"><Button text="Sign out" onClick={handleSignout} /></div>
             <div className = "mx-auto"><Button
               text="Delete Account"
               onClick={() => setIsDeleteConfirmationVisible(true)}
