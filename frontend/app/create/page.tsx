@@ -313,9 +313,9 @@ export default function CreateListing() {
             onClick={closePopup}
           >
             {/* Content */}
-            <div className="relative flex flex-col overflow-y-auto md:overflow-hidden h-screen w-screen rounded-lg bg-white shadow-lg md:flex-row md:mx-20 md:w-full lg:mx-40">
+            <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
               {/* Images (left) */}
-              <div className="order-last flex-col mx-4 md:w-1/2 md:overflow-y-auto border-r md:order-first">
+              <div className="order-last mx-4 flex-col border-r md:order-first md:w-1/2 md:overflow-y-auto">
                 <div className="h-96">
                   <ImageComponent
                     w="w-full"
@@ -334,7 +334,7 @@ export default function CreateListing() {
                 ))}
               </div>
               {/* Text (right) */}
-              <div className="w-1/2 md:overflow-y-auto p-6">
+              <div className="w-1/2 p-6 md:overflow-y-auto">
                 <h2 className="mb-2 text-2xl font-semibold">
                   {selectedListing.title}
                 </h2>
