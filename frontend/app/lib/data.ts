@@ -195,6 +195,26 @@ export async function cooltoggleSaved(uuid: string, saved: boolean) {
   }
 }
 
+export async function cooldeleteListing(uuid: string) {
+  try {
+    const response = await axios.delete(
+      `http://127.0.0.1:5000/delete-listing/${uuid}`,
+      {
+        withCredentials: true,
+      },
+    );
+    if (response.status === 200) {
+      return response.data;
+    }
+    console.log(response.data)
+    throw new Error('Failed to delete listing');
+  } catch (error) {
+    console.error('Error deleting listing:', error);
+    throw error;
+  }
+}
+
+
 export async function fetchUserProfilePicture(): Promise<string> {
   try {
     const user = await axios.get("http://127.0.0.1:5000/current-user", {

@@ -755,10 +755,16 @@ def update_listing(listing_id):
     db.session.commit()
     return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
 
-@bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
+@bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE', 'OPTIONS'])
 def delete_listing(listing_id):
-    user_id = request.args.get('user_id')
+    if request.method == "OPTIONS":
+        response = jsonify({'status': 'ok'})
+        response.headers['Access-Control-Allow-Methods'] = 'DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+    user_id = session['user_id']
     if not user_id:
+        print(user_id)
         return jsonify({"error": "User ID not provided"}), 400
     
     listing = Listing.query.get(listing_id)

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFilteredListings, fetchUserListings, fetchSavedListings, cooltoggleSaved } from "../../lib/data";
+import { fetchFilteredListings, fetchUserListings, fetchSavedListings, cooltoggleSaved, cooldeleteListing } from "../../lib/data";
 import { Listing } from "../../lib/definitions";
 import ImageComponent from "../image";
 import { only } from "node:test";
@@ -58,6 +58,11 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
     return cooltoggleSaved(uuid, saved);
   };
 
+  const deleteListing = async (uuid: string) => {
+    console.log("Deleting listing with uuid: ", uuid);
+    return cooldeleteListing(uuid);
+  }
+
   const handleCopyLink = useCallback((uuid: string, e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `${window.location.origin}/listing/${uuid}`;
@@ -89,16 +94,6 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
               }
               h="h-96"
             />
-            {/* delete button */}
-            {pathname == "/listings" && (
-              <Image
-                src={"/trash-bin-red.png"}
-                alt=""
-                width={28}
-                height={28}
-                className="absolute inset-0 m-4 cursor-pointer transition-all duration-300 hover:-translate-y-1"
-              />
-            )}
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
               <div>
@@ -121,24 +116,42 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
                       height={28}
                     />
                   </div>
-                  <Image
-                    src={
-                      listing.saved
-                        ? "/bookmark-filled.png"
-                        : "/bookmark-white.png"
-                    }
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleSaved(listing.uuid, listing.saved).then((saved) => {
-                        listing.saved = saved;
-                        setListings([...listings]);
-                      });
-                    }}
-                  />
+                  {pathname !== "/listings" && (
+                    <Image
+                      src={
+                        listing.saved
+                          ? "/bookmark-filled.png"
+                          : "/bookmark-white.png"
+                      }
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSaved(listing.uuid, listing.saved).then((saved) => {
+                          listing.saved = saved;
+                          setListings([...listings]);
+                        });
+                      }}
+                    />
+                  )}
+                  {pathname === "/listings" && (
+                    <Image
+                      src={"/trash-bin-red.png"}
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="cursor-pointer transition-all duration-300 hover:-translate-y-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Deleting listing with uuid: ", listing.uuid);
+                        deleteListing(listing.uuid).then(() => {
+                          setListings([...listings]);
+                        });
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>
