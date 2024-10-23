@@ -8,6 +8,7 @@ from datetime import datetime
 from flask_cors import cross_origin
 from functools import wraps
 import logging
+import re
 # from datetime import datetime
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -28,6 +29,35 @@ def login_required(f):
             return jsonify({'error': 'Unauthorized'}), 401
         return f(*args, **kwargs)
     return decorated_function
+
+# Helper functions
+def validate_email(email):
+    """Validate email format"""
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(pattern, email) is not None
+
+def validate_username(username):
+    """Validate username format"""
+    pattern = r'^[\w-]{3,30}$'
+    return re.match(pattern, username) is not None
+
+def validate_phone_number(phone):
+    """Validate phone number format"""
+    # Accepts formats like: +1-123-456-7890, (123) 456-7890, 123.456.7890, 123-456-7890
+    pattern = r'^\+?1?\s*[-.]?\s*(\([0-9]{3}\)|[0-9]{3})\s*[-.]?\s*[0-9]{3}\s*[-.]?\s*[0-9]{4}$'
+    return re.match(pattern, phone) is not None
+
+def format_phone_number(phone):
+    """Format phone number consistently"""
+    # Remove all non-digit characters
+    digits = ''.join(filter(str.isdigit, phone))
+    
+    # Format as XXX-XXX-XXXX
+    if len(digits) == 10:
+        return f'{digits[:3]}-{digits[3:6]}-{digits[6:]}'
+    elif len(digits) == 11 and digits[0] == '1':
+        return f'{digits[1:4]}-{digits[4:7]}-{digits[7:]}'
+    return digits  # Return original digits if it doesn't match expected patterns
 
 
 @bp.route('/signin', methods=['POST'])
@@ -110,6 +140,142 @@ def signout():
     response.set_cookie('auth_token', '', expires=0)
     
     return response, 200
+
+@bp.route('/users/<int:user_id>', methods=['PUT', 'PATCH'])
+@login_required
+def modify_user(user_id):
+    try:
+        # Verify user is modifying their own account
+        if session['user_id'] != user_id:
+            return jsonify({
+                'error': 'Forbidden - You can only modify your own account'
+            }), 403
+
+        # Get the user
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Get JSON data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        # Track what fields were modified
+        modified_fields = []
+        
+        try:
+            # Username update
+            if 'username' in data:
+                new_username = data['username']
+                if new_username:  # Allow clearing username by setting to None/null
+                    if not validate_username(new_username):
+                        return jsonify({
+                            'error': 'Invalid username format. Use 3-30 characters, alphanumeric with underscores and hyphens only.'
+                        }), 400
+                    
+                    existing_user = User.query.filter(
+                        User.username == new_username,
+                        User.id != user_id
+                    ).first()
+                    if existing_user:
+                        return jsonify({
+                            'error': 'Username already taken'
+                        }), 400
+                
+                user.username = new_username
+                modified_fields.append('username')
+
+            # Email update
+            if 'email' in data:
+                new_email = data['email']
+                if not validate_email(new_email):
+                    return jsonify({
+                        'error': 'Invalid email format'
+                    }), 400
+                
+                existing_user = User.query.filter(
+                    User.email == new_email,
+                    User.id != user_id
+                ).first()
+                if existing_user:
+                    return jsonify({
+                        'error': 'Email already registered'
+                    }), 400
+                
+                user.email = new_email
+                modified_fields.append('email')
+
+            # Name update
+            if 'name' in data:
+                new_name = data['name']
+                if not new_name or len(new_name.strip()) < 1:
+                    return jsonify({
+                        'error': 'Name cannot be empty'
+                    }), 400
+                
+                if len(new_name) > 120:
+                    return jsonify({
+                        'error': 'Name is too long (maximum 120 characters)'
+                    }), 400
+                
+                user.name = new_name.strip()
+                modified_fields.append('name')
+
+            # Picture URL update
+            if 'picture' in data:
+                new_picture = data['picture']
+                if new_picture and len(new_picture) > 255:
+                    return jsonify({
+                        'error': 'Picture URL is too long (maximum 255 characters)'
+                    }), 400
+                
+                user.picture = new_picture
+                modified_fields.append('picture')
+
+            # Phone number update
+            if 'phone_number' in data:
+                new_phone = data['phone_number']
+                if new_phone:  # Allow clearing phone number by setting to None/null
+                    if not validate_phone_number(new_phone):
+                        return jsonify({
+                            'error': 'Invalid phone number format. Use format like: XXX-XXX-XXXX or (XXX) XXX-XXXX'
+                        }), 400
+                    # Format phone number consistently
+                    new_phone = format_phone_number(new_phone)
+                
+                user.phone_number = new_phone
+                modified_fields.append('phone_number')
+
+            # Only commit if there were actual changes
+            if modified_fields:
+                db.session.commit()
+                logging.info(f"User {user_id} modified fields: {', '.join(modified_fields)}")
+                
+                return jsonify({
+                    'message': 'User updated successfully',
+                    'modified_fields': modified_fields,
+                    'user': user.to_dict()
+                }), 200
+            else:
+                return jsonify({
+                    'message': 'No fields were modified',
+                    'user': user.to_dict()
+                }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Database error while modifying user {user_id}: {str(e)}")
+            return jsonify({
+                'error': 'Database error occurred while updating user'
+            }), 500
+
+    except Exception as e:
+        logging.error(f"Error in modify_user endpoint: {str(e)}")
+        return jsonify({
+            'error': 'An unexpected error occurred'
+        }), 500
+
 
 
 
@@ -589,10 +755,16 @@ def update_listing(listing_id):
     db.session.commit()
     return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
 
-@bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
+@bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE', 'OPTIONS'])
 def delete_listing(listing_id):
-    user_id = request.args.get('user_id')
+    if request.method == "OPTIONS":
+        response = jsonify({'status': 'ok'})
+        response.headers['Access-Control-Allow-Methods'] = 'DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+    user_id = session['user_id']
     if not user_id:
+        print(user_id)
         return jsonify({"error": "User ID not provided"}), 400
     
     listing = Listing.query.get(listing_id)

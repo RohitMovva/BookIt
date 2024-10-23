@@ -195,6 +195,26 @@ export async function cooltoggleSaved(uuid: string, saved: boolean) {
   }
 }
 
+export async function cooldeleteListing(uuid: string) {
+  try {
+    const response = await axios.delete(
+      `http://127.0.0.1:5000/delete-listing/${uuid}`,
+      {
+        withCredentials: true,
+      },
+    );
+    if (response.status === 200) {
+      return response.data;
+    }
+    console.log(response.data)
+    throw new Error('Failed to delete listing');
+  } catch (error) {
+    console.error('Error deleting listing:', error);
+    throw error;
+  }
+}
+
+
 export async function fetchUserProfilePicture(): Promise<string> {
   try {
     const user = await axios.get("http://127.0.0.1:5000/current-user", {
@@ -276,3 +296,60 @@ export async function deleteUser() {
     throw error;
   }
 }
+
+export async function updateUserEmail(email: string) {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      console.log(user.data.id)
+      const response = await axios.put(
+        `http://127.0.0.1:5000/users/${user.data.id}`, {
+          email: email
+        }, {
+          withCredentials: true
+        });
+
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to update user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+
+export async function updateUserPhoneNumber(phone_number: string) {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      console.log(user.data.id)
+      const response = await axios.put(
+        `http://127.0.0.1:5000/users/${user.data.id}`, {
+          phone_number: phone_number
+        }, {
+          withCredentials: true
+        });
+
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to update user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+

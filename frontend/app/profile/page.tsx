@@ -8,6 +8,7 @@ import axios from "axios";
 import Input from "../ui/input";
 import TopBar from "../ui/home/top-bar";
 import { deleteUser } from "../lib/data";
+import { updateUserEmail, updateUserPhoneNumber } from "../lib/data";
 
 const API_BASE_URL = "http://127.0.0.1:5000";
 
@@ -31,10 +32,16 @@ const SettingsPage: React.FC = () => {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    updateUserEmail(e.target.value);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
+    if (e.target.value.length < 10) {
+      setPhoneError(true);
+      return;
+    }
+    updateUserPhoneNumber(e.target.value);
   };
 
   const handlePhoneBlur = () => {
