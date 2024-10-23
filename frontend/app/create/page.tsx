@@ -173,7 +173,7 @@ export default function CreateListing() {
   return (
     <>
       <TopBar />
-      <div className="mx-20 grid md:grid-cols-2 gap-20 p-4">
+      <div className="mx-20 grid gap-20 p-4 md:grid-cols-2">
         <div>
           <h1 className="mb-4 text-2xl font-bold">Create Listing</h1>
           <form className="grid gap-4" onSubmit={(e) => e.preventDefault()}>
@@ -247,7 +247,7 @@ export default function CreateListing() {
         </div>
 
         {/* Live Preview */}
-        <div className="max-w-96 w-full">
+        <div className="w-full max-w-96">
           <h2>Live Preview</h2>
           <article
             className="relative cursor-pointer rounded-xl"
@@ -312,10 +312,10 @@ export default function CreateListing() {
             onClick={closePopup}
           >
             {/* Content */}
-            <div className="relative flex h-screen w-3/4 rounded-lg bg-white shadow-lg">
+            <div className="relative flex flex-col overflow-y-auto md:overflow-hidden h-screen w-screen rounded-lg bg-white shadow-lg md:flex-row md:mx-20 md:w-full lg:mx-40">
               {/* Images (left) */}
-              <div className="w-1/2 overflow-y-auto border-r p-4">
-                <div className="h-80">
+              <div className="order-last flex-col mx-4 md:w-1/2 md:overflow-y-auto border-r md:order-first">
+                <div className="h-96">
                   <ImageComponent
                     w="w-full"
                     h="h-full"
@@ -333,7 +333,7 @@ export default function CreateListing() {
                 ))}
               </div>
               {/* Text (right) */}
-              <div className="w-1/2 overflow-y-auto p-6">
+              <div className="w-1/2 md:overflow-y-auto p-6">
                 <h2 className="mb-2 text-2xl font-semibold">
                   {selectedListing.title}
                 </h2>
@@ -342,6 +342,9 @@ export default function CreateListing() {
                 </p>
                 <p className="mb-4 text-lg font-bold text-blue-600">
                   ${selectedListing.price}
+                </p>
+                <p className="mb-4 text-sm text-gray-500">
+                  Class: {selectedListing.class}
                 </p>
                 <p className="mb-4 text-sm text-gray-500">
                   Condition: {selectedListing.condition}
@@ -353,9 +356,6 @@ export default function CreateListing() {
                 <p className="text-sm text-gray-700">
                   Email: {selectedListing.email}
                 </p>
-                <button className="btn btn-secondary mt-4" onClick={closePopup}>
-                  Close
-                </button>
               </div>
             </div>
           </div>

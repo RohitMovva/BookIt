@@ -17,9 +17,9 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
   const query = searchParams.get("query") || "";
   const min_price = searchParams.get("min") || "";
   const max_price = searchParams.get("max") || "";
+  const sort_type = searchParams.get("sort") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
-  // const user = null;
-
+  
   useEffect(() => {
     const loadListings = async () => {
       let data;
@@ -30,14 +30,17 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
         data = await fetchSavedListings(query, currentPage) 
       }
       else {
-        data = await fetchFilteredListings(query, currentPage, Number(min_price), Number(max_price));
+        const sort_by = "price";
+        const sort_order = sort_type === "low" ? "asc" : sort_type === "high" ? "desc" : "";
+        console.log("Sort by and sort order", sort_by, sort_order)
+        data = await fetchFilteredListings(query, currentPage, Number(min_price), Number(max_price), sort_by, sort_order);
       }
       console.log(data)
       setListings(data);
       console.log("Listings: ", listings)
     };
     loadListings();
-  }, [query, min_price, max_price]);
+  }, [query, min_price, max_price, sort_type]);
 
   const openListing = (listing: Listing) => setSelectedListing(listing);
   const closeListing = () => setSelectedListing(null);

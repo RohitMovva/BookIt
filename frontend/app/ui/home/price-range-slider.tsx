@@ -31,6 +31,9 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
   }, [searchParams]);
 
   const handleChange = (newValues: number[]) => {
+    if (newValues[1] === 0) {
+      newValues[1] = 1;
+    }
     setValues(newValues);
     onChange(newValues[0], newValues[1]);
 
