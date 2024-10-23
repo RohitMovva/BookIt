@@ -3,12 +3,12 @@ from sqlalchemy import or_
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app import db
-from app.models import User, Listing
+from app.models import User, Listing, saved_listings
 from datetime import datetime
 from flask_cors import cross_origin
-# from datetime import datetime
-
+from functools import wraps
 import logging
+# from datetime import datetime
 
 # logging.basicConfig(level=logging.DEBUG)
 # logger = logging.getLogger(__name__)
@@ -20,6 +20,15 @@ CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleuserconten
 # @app.after_request
 # def after_request(response):
 #     return response
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @bp.route('/signin', methods=['POST'])
 @cross_origin(supports_credentials=True)
@@ -644,3 +653,55 @@ def unsave_listing(listing_id):
         "message": "Listing unsaved successfully",
         "save_count": listing.save_count
     }), 200
+
+@bp.route('/users/<int:user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    try:
+        # Check if the logged-in user is trying to delete their own account
+        if session['user_id'] != user_id:
+            return jsonify({
+                'error': 'Forbidden - You can only delete your own account'
+            }), 403
+
+        # Get the user
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Begin database transaction
+        try:
+            # Delete user's saved listings (association table entries)
+            db.session.execute(saved_listings.delete().where(
+                saved_listings.c.user_id == user_id
+            ))
+
+            # Delete all listings owned by the user
+            Listing.query.filter_by(user_id=user_id).delete()
+
+            # Delete the user
+            db.session.delete(user)
+            
+            # Commit the transaction
+            db.session.commit()
+
+            # Clear the session
+            session.clear()
+
+            return jsonify({
+                'message': 'User and associated data successfully deleted'
+            }), 200
+
+        except Exception as e:
+            # If anything goes wrong, rollback the transaction
+            db.session.rollback()
+            logging.error(f"Error deleting user {user_id}: {str(e)}")
+            return jsonify({
+                'error': 'An error occurred while deleting the user'
+            }), 500
+
+    except Exception as e:
+        logging.error(f"Error in delete_user endpoint: {str(e)}")
+        return jsonify({
+            'error': 'An unexpected error occurred'
+        }), 500

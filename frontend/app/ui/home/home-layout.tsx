@@ -139,7 +139,7 @@ export default function HomeLayout({
             />
             <SidebarItem
               img="/list.png"
-              text="Listings"
+              text="My Listings"
               href="/listings"
               pathname={pathname}
             />

@@ -10,6 +10,7 @@ import Textarea from "../ui/text-area";
 import StyledSelect from "../ui/select";
 import { useRouter } from "next/navigation";
 import TopBar from "../ui/home/top-bar";
+import Button from "../ui/button";
 
 // Utility function to convert blob to base64
 const blobToBase64 = async (blob: string): Promise<string> => {
@@ -223,11 +224,12 @@ export default function CreateListing() {
               onChange={handleChange}
               options={options}
             />
+            <p>Upload Images: </p>
             <input
               type="file"
               accept="image/*"
               onChange={handleThumbnailChange}
-              className="file-input file-input-bordered w-full"
+              className="file-input file-input-bordered w-full te"
             />
             <input
               type="file"
@@ -236,13 +238,10 @@ export default function CreateListing() {
               onChange={handleImagesChange}
               className="file-input file-input-bordered w-full"
             />
-            <button
-              type="button"
-              className="btn btn-primary w-full"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
+            <Button
+              textColor = "text-white btn btn-primary w-full text-2xl"
+              onClick={handleSubmit} text="Create"
+            />
             {formError && <p className="text-red-500">{formError}</p>}{" "}
           </form>
         </div>
@@ -258,7 +257,7 @@ export default function CreateListing() {
             }}
           >
             <ImageComponent
-              h="h-96"
+              h="h-[30rem]"
               img={
                 listing.thumbnail_image
                   ? listing.thumbnail_image
