@@ -7,6 +7,7 @@ import { deleteCookie } from "cookies-next";
 import axios from "axios";
 import Input from "../ui/input";
 import TopBar from "../ui/home/top-bar";
+import { deleteUser } from "../lib/data";
 
 const API_BASE_URL = "http://127.0.0.1:5000";
 
@@ -73,6 +74,8 @@ const SettingsPage: React.FC = () => {
     const correctCode = "123456"; // Simulated correct code
     if (code === correctCode) {
       // Add your delete account logic here
+      console.log("Deleting account...")
+      deleteUser(); // Call the function to delete account
       alert("Account deleted");
       setIsCodeEntryVisible(false);
       setEmailToDelete("");

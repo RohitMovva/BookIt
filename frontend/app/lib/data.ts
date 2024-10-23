@@ -251,3 +251,28 @@ export async function createListing(listing: Listing) {
   }
 }
 
+export async function deleteUser() {
+  try {
+    const user = await axios.get("http://127.0.0.1:5000/current-user", {
+      withCredentials: true,
+    });
+    if (user.status === 200) {
+      console.log(user.data.id)
+      const response = await axios.delete(
+        `http://127.0.0.1:5000/users/${user.data.id}`, {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        return response.data.picture;
+      } else {
+        throw new Error("Failed to fetch user");
+      }
+    } else {
+      throw new Error("Failed to fetch user");
+    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
