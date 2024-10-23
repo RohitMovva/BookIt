@@ -165,56 +165,63 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
           onClick={handleListingClick}
         >
           {/* Content */}
-          <div className="relative flex h-screen w-3/4 rounded-lg bg-white shadow-lg">
+          <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white py-6 shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
             {/* Images (left) */}
-            <div className="w-1/2 overflow-y-auto border-r p-4">
-              <div className="h-80">
+            <div className="order-last mx-4 flex-col justify-items-center md:order-first md:mx-10 md:w-1/2 md:overflow-y-auto">
+              <div className="mb-6 h-96 w-full bg-red-500">
                 <ImageComponent
+                  w="w-full"
+                  h="h-full"
                   img={
                     selectedListing.thumbnail_image
                       ? selectedListing.thumbnail_image
                       : "/placeholderparrot.jpg"
                   }
-                  w="w-full"
-                  h="h-full"
                 />
               </div>
-              {/* <img
-                src={selectedListing.thumbnail_image}
-                alt={selectedListing.title}
-                className="mb-4 h-48 w-full rounded-md object-cover"
-              /> */}
-              {(selectedListing.other_images || []).map((img, idx) => (
-                <div>
-                  <ImageComponent
-                    img={img ? img : "/placeholderparrot.jpg"}
-                    w="w-full"
-                    h="h-80"
-                  />
+              {selectedListing.other_images.map((img, idx) => (
+                <div key={idx} className="mb-6">
+                  <ImageComponent w="w-full" h="h-96" img={img} />
                 </div>
               ))}
             </div>
             {/* Text (right) */}
-            <div className="w-1/2 overflow-y-auto p-6">
-              <h2 className="mb-2 text-2xl font-semibold">
-                {selectedListing.title}
-              </h2>
-              <p className="mb-4 text-gray-700">
-                {selectedListing.description}
-              </p>
-              <p className="mb-4 text-lg font-bold text-blue-600">
-                ${selectedListing.price}
-              </p>
-              <p className="mb-4 text-sm text-gray-500">
-                Condition: {selectedListing.condition}
-              </p>
-              <p className="font-semibold">Contact Information:</p>
-              <p className="text-sm text-gray-700">
-                Phone: {selectedListing.phone}
-              </p>
-              <p className="text-sm text-gray-700">
-                Email: {selectedListing.email}
-              </p>
+            <div className="grid w-1/2 gap-2 p-6 md:overflow-y-auto md:border-l md:border-black md:px-12">
+              <div>
+                <h2 className="mb-2 text-5xl font-semibold">
+                  {selectedListing.title}
+                </h2>
+                <p className="mb-4 text-2xl text-gray-700">
+                  {selectedListing.description}
+                </p>
+                <div className="flex items-center gap-8">
+                  <p className="w-fit rounded-full bg-blue-800 px-3 py-3 text-center text-xl text-white">
+                    ${selectedListing.price}
+                  </p>
+                  <p className="w-fit rounded-full bg-blue-800 px-3 py-3 text-center text-xl text-white">
+                    {selectedListing.condition}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className="text-3xl">Class:</p>
+                <p className="text-2xl">{selectedListing.class}</p>
+              </div>
+              <div>
+                <p className="text-3xl">Condition:</p>
+                <p className="text-2xl">{selectedListing.condition}</p>
+              </div>
+              <div className="">
+                <p className="text-3xl">Contact Information</p>
+                <div>
+                  <p className="text-2xl text-gray-700">
+                    Phone: {selectedListing.phone}
+                  </p>
+                  <p className="text-2xl text-gray-700">
+                    Email: {selectedListing.email}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
