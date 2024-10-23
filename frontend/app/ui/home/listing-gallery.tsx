@@ -30,7 +30,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
         data = await fetchSavedListings(query, currentPage) 
       }
       else {
-        data = await fetchFilteredListings(query, currentPage, min_price, max_price);
+        data = await fetchFilteredListings(query, currentPage, Number(min_price), Number(max_price));
       }
       console.log(data)
       setListings(data);

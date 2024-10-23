@@ -38,20 +38,28 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
     const params = new URLSearchParams(searchParams.toString());
 
     // Update the min and max parameters
+
     params.set("min", newValues[0].toString());
     params.set("max", newValues[1].toString());
+
+    if (newValues[0] <= 0) {
+      params.delete("min");
+    }
+    if (newValues[1] >= 1000) {
+      params.delete("max");
+    }
 
     // Update the URL parameters using the next/navigation router
     router.replace(`?${params.toString()}`);
   };
   const resetSlider = () => {
-    handleChange([0,1000])
+    handleChange([0, 1000]);
   };
- 
+
   return (
-    <div className="w-full p-4">
-      <div className="mb-4 text-center">
-        <label className="font-semibold text-gray-700">
+    <div className="w-full">
+      <div className="mb-4">
+        <label className="">
           Price Range: ${values[0]} - ${values[1]}
         </label>
       </div>
@@ -60,7 +68,7 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
         step={step}
         min={min}
         max={max}
-        onChange={handleChange}       
+        onChange={handleChange}
         renderTrack={({ props, children }) => {
           return (
             <div
@@ -83,13 +91,23 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
           <div
             {...props}
             className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 shadow-lg"
-          >
-          </div>
+          ></div>
         )}
       />
-      <p onClick={resetSlider} className="m-5 ml-36 relative flex h-6 w-20 items-center justify-center rounded bg-gray-400 shadow-lg font-semibold text-gray-700"><Image src="/reset.png" width={16} height={16} alt="Reset" className="mr-2"/>Reset</p>
+      <p
+        onClick={resetSlider}
+        className="relative m-5 ml-36 flex h-6 w-20 cursor-pointer items-center justify-center rounded bg-gray-400 font-semibold text-gray-700 shadow-lg"
+      >
+        <Image
+          src="/reset.png"
+          width={16}
+          height={16}
+          alt="Reset"
+          className="mr-2"
+        />
+        Reset
+      </p>
     </div>
-    
   );
 };
 

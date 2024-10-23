@@ -3,12 +3,18 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 import Button from "../button";
+import StyledSelect from "../select";
 import DropdownButton from "../button-dropdown";
+import { useState } from "react";
 
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const sortBy = searchParams.get("sort") || "Featured";
+
+  const [sort, setSort] = useState(sortBy);
 
   const handleSearch = useDebouncedCallback((term) => {
     const params = new URLSearchParams(searchParams);
@@ -19,6 +25,20 @@ export default function Search({ placeholder }: { placeholder: string }) {
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === "") {
+      params.delete("sort");
+    } else {
+      params.set("sort", value);
+    }
+    setSort(value);
+    replace(`${pathname}?${params.toString()}`);
+  };
 
   return (
     <div className="relative">
@@ -42,22 +62,18 @@ export default function Search({ placeholder }: { placeholder: string }) {
         />
       </div>
       <div className="absolute right-0 top-1/2 -translate-y-1/2">
-        <DropdownButton
-          text="Sort by"
-          bgColor="bg-white"
-          textColor="text-black"
-          border="border-r border-y"
-          borderColor="border-gray-400"
-          rounded="rounded-r-xl"
-          bgHover="bg-gray-400"
-          caretBlack={true}
+        <StyledSelect
+          name="Sort By"
+          className="rounded-l-none border-l-0"
+          value={sort}
+          onChange={handleChange}
           options={[
-            { label: "Profile", href: "/profile" },
-            { label: "Settings", href: "/settings" },
-            {
-              label: "Logout",
-            },
-          ]} isOpen={false}        />
+            { label: "Relevance", value: "" },
+            { label: "Most saved", value: "saved" },
+            { label: "$ low to high", value: "low" },
+            { label: "$ high to low", value: "high" },
+          ]}
+        />
       </div>
     </div>
   );

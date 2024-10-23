@@ -2,7 +2,6 @@ import { redirect } from "next/dist/server/api-utils";
 import { Condition, Listing } from "./definitions";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import { useNavigate } from 'react-router-dom';
 
 
 export async function fetchFilteredListings(

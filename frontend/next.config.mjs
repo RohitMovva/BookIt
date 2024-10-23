@@ -1,11 +1,9 @@
-// next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
     return [
       {
-        // idk if this is gonn work
-        source: "/(.*)", // This matches all routes
+        source: "/(.*)",
         headers: [
           {
             key: "Referrer-Policy",
@@ -14,6 +12,9 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  images: {
+    domains: ["lh3.googleusercontent.com"],
   },
 };
 
