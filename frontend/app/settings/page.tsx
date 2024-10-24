@@ -201,6 +201,7 @@ const SettingsPage: React.FC = () => {
             </div>
             <div className="flex mx-auto">
               <label className="my-auto text-xl mx-4">Phone: </label>
+              {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
               <div className="my-auto border p-1">
                 {isEditingPhone ? (
                   <input
@@ -320,15 +321,7 @@ const SettingsPage: React.FC = () => {
           <div onClick={() => setIsEditingEmail(true)}>{email}</div>
         )} */}
     </div><div className="mt-2">
-        <Input
-          type="number"
-          name="phone"
-          placeholder="Phone"
-          className={`input w-full [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${phoneError ? "border-red-500" : "input-bordered"}`}
-          value={phone}
-          onChange={handlePhoneChange}
-          onBlur={handlePhoneBlur} />
-        {phoneError && <p className="text-red-500">Invalid phone number</p>}{" "}
+        
         {/* {isEditingPhone ? (
     <input
       type="text"
