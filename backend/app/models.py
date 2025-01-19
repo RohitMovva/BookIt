@@ -46,7 +46,7 @@ class Listing(db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     email_address = db.Column(db.String(120), nullable=False)
     # Increased size for base64 thumbnail (50KB)
-    thumbnail_image = db.Column(db.String(65536), nullable=False)  # 64KB
+    thumbnail_image = db.Column(db.String(2*655360), nullable=False)  # 64KB
     # Using JSON type for array of base64 images
     other_images = db.Column(JSON, nullable=False)
     condition = db.Column(db.String(20), nullable=False)
@@ -65,14 +65,14 @@ class Listing(db.Model):
     # Add validation for image sizes
     @validates('thumbnail_image')
     def validate_thumbnail(self, key, value):
-        max_size = 393216  # 384KB not 64KB
+        max_size = 2*3932160  # 384KB not 64KB
         if len(value) > max_size:
             raise ValueError(f'Thumbnail image exceeds maximum size of {max_size/1024:.0f}KB')
         return value
     
     @validates('other_images')
     def validate_other_images(self, key, value):
-        max_size_per_image = 393216  # 384KB
+        max_size_per_image = 2*3932160  # 384KB
         max_images = 5  # Limit number of additional images
         
         if not isinstance(value, list):

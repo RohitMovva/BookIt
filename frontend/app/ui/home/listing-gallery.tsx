@@ -15,8 +15,8 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
   const [tooltipVisible, setTooltipVisible] = useState(false); // State for tooltip visibility
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
-  const min_price = searchParams.get("min") || "";
-  const max_price = searchParams.get("max") || "";
+  const min_price = searchParams.get("min") || 0;
+  const max_price = searchParams.get("max") || 1000;
   const sort_type = searchParams.get("sort") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
 
@@ -26,6 +26,7 @@ export default function ListingGallery({ hasUser, onlySaved }: { hasUser?: boole
   useEffect(() => {
     const loadListings = async () => {
       let data;
+      console.log(data)
       console.log(onlySaved), console.log(hasUser)
       if (hasUser) {
         data = await fetchUserListings(query, currentPage);

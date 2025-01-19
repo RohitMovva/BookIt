@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Condition, Listing } from "../lib/definitions";
 import { createListing } from "../lib/data";
 import Image from "next/image";
@@ -70,6 +70,7 @@ export default function CreateListing() {
       !listing.phone ||
       !listing.thumbnail_image
     ) {
+      console.log(listing)
       setFormError("Please fill out all fields.");
       return;
     }
@@ -143,17 +144,20 @@ export default function CreateListing() {
   };
 
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const imageFiles = Array.from(e.target.files).map((file) =>
-        URL.createObjectURL(file),
-      );
-      setListing((prevListing) => ({
+  if (e.target.files) {
+    const imageFiles = Array.from(e.target.files).map((file) =>
+      URL.createObjectURL(file),
+    );
+    setListing((prevListing) => {
+      const newListing = {
         ...prevListing,
         other_images: imageFiles,
-        // thumbnail_image: imageFiles[0] || "",
-      }));
-    }
-  };
+      };
+      console.log("Updated other_images:", newListing.other_images);
+      return newListing;
+    });
+  }
+};
 
   const closePopup = () => {
     setIsPopupOpen(false);
@@ -327,9 +331,9 @@ export default function CreateListing() {
                     }
                   />
                 </div>
-                {selectedListing.other_images.map((img, idx) => (
-                  <div key={idx} className="mb-6">
-                    <ImageComponent w="w-full" h="h-96" img={img} />
+                  {selectedListing.other_images.map((img) => (
+                  <div className="mb-6" key={img}>
+                  <ImageComponent w="w-full" h="h-96" img={img} />
                   </div>
                 ))}
               </div>
@@ -339,7 +343,7 @@ export default function CreateListing() {
                   <h2 className="mb-2 text-5xl font-semibold">
                     {selectedListing.title}
                   </h2>
-                  <p className="mb-4 text-2xl text-gray-700">
+                  <p className="mb-4 text-lg text-gray-700">
                     {selectedListing.description}
                   </p>
                   <div className="flex items-center gap-8">

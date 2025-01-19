@@ -350,7 +350,7 @@ def create_listing():
     user = User.query.get(session['user_id'])
     if not user:
         return jsonify({"error": "User not found"}), 404
-
+    print(data.get('other_images'))
     new_listing = Listing(
         title=data['title'],
         description=data['description'],
