@@ -242,25 +242,43 @@ export async function fetchUserProfilePicture(): Promise<string> {
 }
 
 export async function createListing(listing: Listing) {
-  // const navigate = useNavigate(); // Note: This must be used within a React component
-
   try {
-    const response = await axios.post('http://127.0.0.1:5000/create-listing', {
-      title: listing.title,
-      description: listing.description,
-      price: listing.price,
-      phone_number: listing.phone,
-      email_address: listing.email,
-      thumbnail_image: listing.thumbnail_image,
-      other_images: listing.other_images,
-      condition: listing.condition,
-      class_type: "english",
-    }, {
-      withCredentials: true
-    });
+    const formData = new FormData();
     
+    // Add text fields
+    formData.append('title', listing.title);
+    formData.append('description', listing.description);
+    formData.append('price', listing.price.toString());
+    formData.append('phone_number', listing.phone);
+    formData.append('email_address', listing.email);
+    formData.append('condition', listing.condition);
+    formData.append('class_type', 'english');
+
+    // Add thumbnail
+    if (listing.thumbnail_image instanceof File) {
+      formData.append('thumbnail', listing.thumbnail_image);
+    }
+
+    // Add other images
+    if (listing.other_images && listing.other_images.length > 0) {
+      listing.other_images.forEach((image) => {
+        if (image instanceof File) {
+          formData.append('other_images', image);
+        }
+      });
+    }
+
+    const response = await axios.post('http://127.0.0.1:5000/create-listing', 
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
     if (response.status === 200 || response.status === 201) {
-      // navigate('/'); // Redirect to home page
       return response.data;
     } else {
       throw new Error('Failed to create listing');
@@ -270,7 +288,6 @@ export async function createListing(listing: Listing) {
     throw error;
   }
 }
-
 export async function deleteUser() {
   try {
     const user = await axios.get("http://127.0.0.1:5000/current-user", {

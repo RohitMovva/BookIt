@@ -12,26 +12,12 @@ import { useRouter } from "next/navigation";
 import TopBar from "../ui/home/top-bar";
 import Button from "../ui/button";
 
-// Utility function to convert blob to base64
-const blobToBase64 = async (blob: string): Promise<string> => {
-  // If the blob is already a base64 string, return it
-  if (blob.startsWith("data:")) {
-    return blob;
+// Add helper functions for image preview
+const createPreviewUrl = (file: File | string): string => {
+  if (file instanceof File) {
+    return URL.createObjectURL(file);
   }
-
-  // Convert blob string to actual Blob object
-  const response = await fetch(blob);
-  const blobData = await response.blob();
-
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      resolve(base64String);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blobData);
-  });
+  return file;
 };
 
 export default function CreateListing() {
@@ -43,7 +29,7 @@ export default function CreateListing() {
     price: "",
     phone: "",
     email: "",
-    thumbnail_image: "",
+    thumbnail_image: "/placeholderparrot.jpg", // Default placeholder
     other_images: [],
     condition: Condition.Good,
     date: new Date().toISOString(),
@@ -51,10 +37,18 @@ export default function CreateListing() {
     saved: false,
   });
 
+
   const [phoneError, setPhoneError] = useState(false);
   const [formError, setFormError] = useState("");
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [previewUrls, setPreviewUrls] = useState<{
+    thumbnail: string;
+    others: string[];
+  }>({
+    thumbnail: "/placeholderparrot.jpg",
+    others: [],
+  });
 
   const phoneRegex = /^[0-9]{10}$/;
 
@@ -70,12 +64,10 @@ export default function CreateListing() {
       !listing.phone ||
       !listing.thumbnail_image
     ) {
-      console.log(listing)
       setFormError("Please fill out all fields.");
       return;
     }
 
-    // Check if phone is provided before validating
     if (listing.phone && !phoneRegex.test(listing.phone)) {
       setPhoneError(true);
       setFormError("Please enter a valid 10-digit phone number.");
@@ -83,27 +75,11 @@ export default function CreateListing() {
     }
 
     try {
-      // Convert thumbnail to base64
-      const base64Thumbnail = await blobToBase64(listing.thumbnail_image);
-
-      // Convert all images to base64
-      const base64Images = await Promise.all(
-        listing.other_images.map((image) => blobToBase64(image)),
-      );
-
-      // Create new listing object with base64 converted images
-      const listingWithBase64 = {
-        ...listing,
-        thumbnail_image: base64Thumbnail,
-        other_images: base64Images,
-      };
-
-      console.log("Form submitted successfully:", listingWithBase64);
-      createListing(listingWithBase64);
+      await createListing(listing);
       router.push("/");
     } catch (error) {
-      setFormError("Error converting images. Please try again.");
-      console.error("Error converting images to base64:", error);
+      setFormError("Error creating listing. Please try again.");
+      console.error("Error creating listing:", error);
     }
   };
 
@@ -130,34 +106,39 @@ export default function CreateListing() {
     }
   };
 
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const imageFiles = Array.from(e.target.files).map((file) =>
-        URL.createObjectURL(file),
-      );
-      console.log(imageFiles);
-      setListing((prevListing) => ({
-        ...prevListing,
-        thumbnail_image: imageFiles[0] || "",
+  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const previewUrl = URL.createObjectURL(file);
+      
+      setListing(prev => ({
+        ...prev,
+        thumbnail_image: file
+      }));
+      
+      setPreviewUrls(prev => ({
+        ...prev,
+        thumbnail: previewUrl
       }));
     }
   };
 
-  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.files) {
-    const imageFiles = Array.from(e.target.files).map((file) =>
-      URL.createObjectURL(file),
-    );
-    setListing((prevListing) => {
-      const newListing = {
-        ...prevListing,
-        other_images: imageFiles,
-      };
-      console.log("Updated other_images:", newListing.other_images);
-      return newListing;
-    });
-  }
-};
+  const handleOtherImagesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+      
+      setListing(prev => ({
+        ...prev,
+        other_images: files
+      }));
+      
+      setPreviewUrls(prev => ({
+        ...prev,
+        others: newPreviewUrls
+      }));
+    }
+  };
 
   const closePopup = () => {
     setIsPopupOpen(false);
@@ -166,6 +147,15 @@ export default function CreateListing() {
   function openListing(listing: Listing): void {
     throw new Error("Function not implemented.");
   }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrls.thumbnail !== "/placeholderparrot.jpg") {
+        URL.revokeObjectURL(previewUrls.thumbnail);
+      }
+      previewUrls.others.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   console.log("THUMBNAIL: ", listing.thumbnail_image);
 
@@ -239,7 +229,7 @@ export default function CreateListing() {
               type="file"
               accept="image/*"
               multiple
-              onChange={handleImagesChange}
+              onChange={handleOtherImagesChange}
               className="file-input file-input-bordered w-full"
             />
             <Button
@@ -251,23 +241,23 @@ export default function CreateListing() {
           </form>
         </div>
 
-        {/* Live Preview */}
-        <div className="w-full max-w-96">
+      {/* Live Preview */}
+      <div className="w-full max-w-96">
           <h2>Live Preview</h2>
           <article
             className="relative cursor-pointer rounded-xl"
             onClick={() => {
-              setSelectedListing(listing);
+              setSelectedListing({
+                ...listing,
+                thumbnail_image: previewUrls.thumbnail,
+                other_images: previewUrls.others
+              });
               setIsPopupOpen(true);
             }}
           >
             <ImageComponent
               h="h-96"
-              img={
-                listing.thumbnail_image
-                  ? listing.thumbnail_image
-                  : "/placeholderparrot.jpg"
-              }
+              img={previewUrls.thumbnail}
             />
             <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent from-40% via-black/80 via-80% to-black/80"></div>
             <div className="absolute bottom-0 grid w-full gap-4 p-4 text-white">
@@ -312,31 +302,23 @@ export default function CreateListing() {
 
         {/* Popup for live preview */}
         {isPopupOpen && selectedListing && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            onClick={closePopup}
-          >
-            {/* Content */}
-            <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white py-6 shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
-              {/* Images (left) */}
-              <div className="order-last mx-4 flex-col justify-items-center md:order-first md:mx-10 md:w-1/2 md:overflow-y-auto">
-                <div className="mb-6 h-96 bg-red-500 w-full">
-                  <ImageComponent
-                    w="w-full"
-                    h="h-full"
-                    img={
-                      selectedListing.thumbnail_image
-                        ? selectedListing.thumbnail_image
-                        : "/placeholderparrot.jpg"
-                    }
-                  />
-                </div>
-                  {selectedListing.other_images.map((img) => (
-                  <div className="mb-6" key={img}>
-                  <ImageComponent w="w-full" h="h-96" img={img} />
-                  </div>
-                ))}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={closePopup}>
+          <div className="relative flex h-screen w-screen flex-col overflow-y-auto rounded-lg bg-white py-6 shadow-lg md:mx-20 md:w-full md:flex-row md:overflow-hidden lg:mx-40">
+            <div className="order-last mx-4 flex-col justify-items-center md:order-first md:mx-10 md:w-1/2 md:overflow-y-auto">
+              <div className="mb-6 h-96 w-full">
+                <ImageComponent
+                  w="w-full"
+                  h="h-full"
+                  img={previewUrls.thumbnail}
+                />
               </div>
+              {previewUrls.others.map((url, index) => (
+                <div className="mb-6" key={`preview-${index}`}>
+                  <ImageComponent w="w-full" h="h-96" img={url} />
+                </div>
+              ))}
+            </div>
               {/* Text (right) */}
               <div className="grid w-1/2 gap-2 p-6 md:border-l md:border-black md:px-12 md:overflow-y-auto">
                 <div>

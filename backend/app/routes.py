@@ -1,26 +1,39 @@
-from flask import Blueprint, request, jsonify, session, make_response
+from flask import Blueprint, request, jsonify, session, make_response, current_app
 from sqlalchemy import or_
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app import db
 from app.models import User, Listing, saved_listings
+import app
 from datetime import datetime
 from flask_cors import cross_origin
 from functools import wraps
 import logging
 import re
+from werkzeug.utils import secure_filename
+from flask import send_from_directory
+import os
+
+# Add these configurations at the top of your routes file
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # from datetime import datetime
 
-# logging.basicConfig(level=logging.DEBUG)
-# logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 bp = Blueprint('/api', __name__)
 
-# You'll need to install google-auth: pip install google-auth
 CLIENT_ID = "181075873064-ggjodg29em6uua3m78iptb9e3aaqr610.apps.googleusercontent.com"
 
-# @app.after_request
-# def after_request(response):
-#     return response
+@bp.route('/api/images/<path:filename>')
+@cross_origin(supports_credentials=True)
+def serve_image(filename):
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
 
 def login_required(f):
     @wraps(f)
@@ -302,7 +315,6 @@ def get_user_info(user_id):
     else:
         return jsonify({"error": "User not found"}), 404
 
-# You can also add an endpoint to get the current user's info
 @bp.route('/current-user', methods=['GET'])
 def get_current_user_info():
     if 'user_id' in session:
@@ -311,65 +323,78 @@ def get_current_user_info():
             return jsonify(user.to_dict()), 200
     return jsonify({"error": "Not authenticated"}), 401
 
-
-# @bp.route('/create-listing', methods=['POST'])
-# def create_listing():
-#     if 'user_id' not in session:
-#         return jsonify({"error": "User not authenticated"}), 401
-
-#     data = request.json
-#     user = User.query.get(session['user_id'])
-
-#     if not user:
-#         return jsonify({"error": "User not found"}), 404
-
-#     new_listing = Listing(
-#         title=data['title'],
-#         description=data['description'],
-#         price=data['price'],
-#         phone_number=data['phone_number'],
-#         email_address=data['email_address'],
-#         thumbnail_image=data['thumbnail_image'],
-#         other_images=data.get('other_images', []),
-#         condition=data['condition'],
-#         date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-#         class_type=data['class_type'],
-#         user_id=user.id
-#     )
-
-#     db.session.add(new_listing)
-#     db.session.commit()
-
-#     return jsonify({"message": "Listing created successfully", "listing": new_listing.to_dict()}), 201
-
 @bp.route('/create-listing', methods=['POST'])
 def create_listing():
-    data = request.json
+    logger.debug(f"Session in create_listing: {session}")
     if 'user_id' not in session:
         return jsonify({"error": "User not authenticated"}), 401
+    
     user = User.query.get(session['user_id'])
     if not user:
         return jsonify({"error": "User not found"}), 404
-    print(data.get('other_images'))
+
+    # Check if files were uploaded
+    if 'thumbnail' not in request.files:
+        return jsonify({"error": "No thumbnail file provided"}), 400
+    
+    logger.debug(f"Request files: {request.files}")
+    
+    thumbnail_file = request.files['thumbnail']
+    if thumbnail_file.filename == '' or not allowed_file(thumbnail_file.filename):
+        return jsonify({"error": "Invalid thumbnail file"}), 400
+
+    # Handle other images
+    other_image_paths = []
+    if 'other_images' in request.files:
+        other_images = request.files.getlist('other_images')
+        for image in other_images:
+            if image.filename != '' and allowed_file(image.filename):
+                other_image_paths.append(image)
+
+    # Create new listing
     new_listing = Listing(
-        title=data['title'],
-        description=data['description'],
-        price=data['price'],
-        phone_number=data['phone_number'],
-        email_address=data['email_address'],
-        thumbnail_image=data['thumbnail_image'],
-        other_images=data.get('other_images', []),
-        condition=data['condition'],
-        date=datetime.utcnow(),  # Now storing as DateTime object
-        class_type=data['class_type'],
+        title=request.form['title'],
+        description=request.form['description'],
+        price=float(request.form['price']),
+        phone_number=request.form['phone_number'],
+        email_address=request.form['email_address'],
+        condition=request.form['condition'],
+        date=datetime.utcnow(),
+        class_type=request.form['class_type'],
         user_id=user.id
     )
-    print("New listing: ", new_listing)
-    
-    db.session.add(new_listing)
-    db.session.commit()
-    
-    return jsonify({"message": "Listing created successfully", "listing": new_listing.to_dict()}), 201
+
+    logger.debug(f"New listing: {new_listing}")
+    logger.debug(f"Image path: {current_app.config['UPLOAD_FOLDER']}")  # Add this at the start of save_uploaded_file
+
+    try:
+        # Save thumbnail
+        logger.debug(f"Thumbnail file: {thumbnail_file}")
+        thumbnail_path = new_listing.save_uploaded_file(thumbnail_file, is_thumbnail=True)
+        new_listing.thumbnail_path = thumbnail_path
+        logger.debug(f"Thumbnail path: {thumbnail_path}")
+
+        # Save other images
+        logger.debug(f"Other images: {other_image_paths}")
+        other_paths = []
+        for image in other_image_paths:
+            path = new_listing.save_uploaded_file(image, is_thumbnail=False)
+            other_paths.append(path)
+        new_listing.other_image_paths = other_paths
+        logger.debug(f"Other image paths: {other_paths}")
+
+        db.session.add(new_listing)
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Listing created successfully",
+            "listing": new_listing.to_dict()
+        }), 201
+
+    except Exception as e:
+        logger.error(f"Error creating listing: {str(e)}")
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 
@@ -475,53 +500,6 @@ def get_listings():
     }
     
     return jsonify(response), 200
-
-# @bp.route('/get-user-listings', methods=['GET'])
-# def get_user_listings():
-#     if 'user_id' not in session:
-#         return jsonify({"error": "User not authenticated"}), 401
-
-#     user = User.query.get(session['user_id'])
-#     if not user:
-#         return jsonify({"error": "User not found"}), 404
-
-#     listings = user.listings.all()
-#     return jsonify({"listings": [listing.to_dict() for listing in listings]}), 200
-
-# @bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
-# def update_listing(listing_id):
-#     if 'user_id' not in session:
-#         return jsonify({"error": "User not authenticated"}), 401
-
-#     listing = Listing.query.get(listing_id)
-#     if not listing:
-#         return jsonify({"error": "Listing not found"}), 404
-
-#     if listing.user_id != session['user_id']:
-#         return jsonify({"error": "Unauthorized to update this listing"}), 403
-
-#     data = request.json
-#     for key, value in data.items():
-#         setattr(listing, key, value)
-
-#     db.session.commit()
-#     return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
-
-# @bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE'])
-# def delete_listing(listing_id):
-#     if 'user_id' not in session:
-#         return jsonify({"error": "User not authenticated"}), 401
-
-#     listing = Listing.query.get(listing_id)
-#     if not listing:
-#         return jsonify({"error": "Listing not found"}), 404
-
-#     if listing.user_id != session['user_id']:
-#         return jsonify({"error": "Unauthorized to delete this listing"}), 403
-
-#     db.session.delete(listing)
-#     db.session.commit()
-#     return jsonify({"message": "Listing deleted successfully"}), 200
 
 @bp.route('/get-user-listings/<int:user_id>', methods=['GET'])
 def get_user_listings(user_id):
@@ -738,22 +716,58 @@ def get_saved_listings(user_id):
 
 @bp.route('/update-listing/<uuid:listing_id>', methods=['PUT'])
 def update_listing(listing_id):
-    data = request.json
-    user_id = data.get('user_id')
-    if not user_id:
-        return jsonify({"error": "User ID not provided"}), 400
-    
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
     listing = Listing.query.get(listing_id)
     if not listing:
         return jsonify({"error": "Listing not found"}), 404
-    if listing.user_id != user_id:
+    if listing.user_id != session['user_id']:
         return jsonify({"error": "Unauthorized to update this listing"}), 403
-    
-    for key, value in data.items():
-        if key != 'user_id':
-            setattr(listing, key, value)
-    db.session.commit()
-    return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
+
+    try:
+        # Update basic fields
+        listing.title = request.form.get('title', listing.title)
+        listing.description = request.form.get('description', listing.description)
+        listing.price = float(request.form.get('price', listing.price))
+        listing.phone_number = request.form.get('phone_number', listing.phone_number)
+        listing.email_address = request.form.get('email_address', listing.email_address)
+        listing.condition = request.form.get('condition', listing.condition)
+        listing.class_type = request.form.get('class_type', listing.class_type)
+
+        # Handle new thumbnail if provided
+        if 'thumbnail' in request.files:
+            thumbnail_file = request.files['thumbnail']
+            if thumbnail_file.filename != '' and allowed_file(thumbnail_file.filename):
+                # Delete old thumbnail
+                listing.delete_file(listing.thumbnail_path)
+                # Save new thumbnail
+                new_thumbnail_path = listing.save_uploaded_file(thumbnail_file, is_thumbnail=True)
+                listing.thumbnail_path = new_thumbnail_path
+
+        # Handle new other images if provided
+        if 'other_images' in request.files:
+            new_images = request.files.getlist('other_images')
+            valid_new_images = [img for img in new_images if img.filename != '' and allowed_file(img.filename)]
+            
+            if valid_new_images:
+                # Delete old images
+                for old_path in listing.other_image_paths:
+                    listing.delete_file(old_path)
+                
+                # Save new images
+                new_paths = []
+                for image in valid_new_images:
+                    path = listing.save_uploaded_file(image, is_thumbnail=False)
+                    new_paths.append(path)
+                listing.other_image_paths = new_paths
+
+        db.session.commit()
+        return jsonify({"message": "Listing updated successfully", "listing": listing.to_dict()}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @bp.route('/delete-listing/<uuid:listing_id>', methods=['DELETE', 'OPTIONS'])
 def delete_listing(listing_id):
@@ -762,20 +776,30 @@ def delete_listing(listing_id):
         response.headers['Access-Control-Allow-Methods'] = 'DELETE, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         return response
-    user_id = session['user_id']
-    if not user_id:
-        print(user_id)
-        return jsonify({"error": "User ID not provided"}), 400
-    
+
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
     listing = Listing.query.get(listing_id)
     if not listing:
         return jsonify({"error": "Listing not found"}), 404
-    if listing.user_id != int(user_id):
+    if listing.user_id != session['user_id']:
         return jsonify({"error": "Unauthorized to delete this listing"}), 403
-    
-    db.session.delete(listing)
-    db.session.commit()
-    return jsonify({"message": "Listing deleted successfully"}), 200
+
+    try:
+        # Delete image files
+        listing.delete_file(listing.thumbnail_path)
+        for path in listing.other_image_paths:
+            listing.delete_file(path)
+
+        # Delete database record
+        db.session.delete(listing)
+        db.session.commit()
+        return jsonify({"message": "Listing deleted successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # Endpoints for saving/unsaving listings
 @bp.route('/save-listing/<uuid:listing_id>', methods=['POST'])
@@ -877,3 +901,4 @@ def delete_user(user_id):
         return jsonify({
             'error': 'An unexpected error occurred'
         }), 500
+

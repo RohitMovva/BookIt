@@ -16,13 +16,14 @@ export interface Listing {
   price: string;
   phone: string;
   email: string;
-  thumbnail_image: string;
-  other_images: string[];
+  thumbnail_image: File | string;
+  other_images: (File | string)[];
   condition: Condition;
   date: string;
   class: string;
   saved: boolean;
 }
+
 
 export interface ButtonProps {
   text?: string;
