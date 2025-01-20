@@ -7,6 +7,7 @@ from uuid import uuid4
 from datetime import datetime
 
 class User(db.Model):
+    __tablename__ = 'users'  # Changed from 'user' to 'users'
     id = db.Column(db.Integer, primary_key=True)
     google_id = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -31,8 +32,8 @@ class User(db.Model):
         return f'<User {self.username}>'
 # Association table for saved listings
 saved_listings = db.Table('saved_listings',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('listing_id', UUID(as_uuid=True), db.ForeignKey('listing.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('listing_id', UUID(as_uuid=True), db.ForeignKey('listing.id', ondelete='CASCADE'), primary_key=True),
     db.Column('saved_at', db.DateTime, default=datetime.utcnow)
 )
 
@@ -52,7 +53,7 @@ class Listing(db.Model):
     condition = db.Column(db.String(20), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     class_type = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Changed from 'user.id' to 'users.id'
     
     # Add relationship for users who saved this listing
     saved_by_users = db.relationship(
