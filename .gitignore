@@ -20,3 +20,6 @@ __pycache__/
 flask_session/
 
 node_modules/
+
+# ignore env files
+.env
