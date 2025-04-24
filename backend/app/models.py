@@ -6,6 +6,7 @@ from flask import session, current_app
 from uuid import uuid4
 from datetime import datetime
 import os
+import time
 from werkzeug.utils import secure_filename
 
 
@@ -71,40 +72,54 @@ class Listing(db.Model):
         base_path = os.path.abspath(current_app.config['UPLOAD_FOLDER'])
         print(f"Absolute base path: {base_path}")
         
+        # Make sure filename is secure and add uniqueness
         filename = secure_filename(file.filename)
         unique_filename = f"{uuid4()}_{filename}"
         
-        # Use absolute paths
+        # Use normalized absolute paths for Windows
         subdir = 'thumbnails' if is_thumbnail else 'images'
-        upload_dir = os.path.abspath(os.path.join(base_path, subdir))
-        file_path = os.path.abspath(os.path.join(upload_dir, unique_filename))
+        upload_dir = os.path.normpath(os.path.join(base_path, subdir))
+        file_path = os.path.normpath(os.path.join(upload_dir, unique_filename))
         
-        print(f"Using absolute paths:")
+        print(f"Using normalized absolute paths:")
         print(f"Upload dir: {upload_dir}")
         print(f"File path: {file_path}")
         
+        # Ensure directory exists
+        os.makedirs(upload_dir, exist_ok=True)
+        
         try:
-            # Instead of using file.save(), let's read and write the file manually
+            # Reset file pointer and read content
             file.seek(0)
             file_content = file.read()
             print(f"Read {len(file_content)} bytes from uploaded file")
             
+            # Write file with explicit closing
             with open(file_path, 'wb') as f:
+                print(f"filed open")
                 f.write(file_content)
-                f.flush()  # Force write to disk
-                os.fsync(f.fileno())  # Force filesystem sync
+                f.flush()
+                os.fsync(f.fileno())
+
             
-            # Verify file was written
+            # Double-check file was written correctly
             if os.path.exists(file_path):
                 actual_size = os.path.getsize(file_path)
                 print(f"File exists on disk with size: {actual_size}")
+                # Try to open and read to verify access
+                with open(file_path, 'rb') as f:
+                    test_read = f.read(min(1024, actual_size))
+                    print(f"Successfully verified read access to saved file ({len(test_read)} bytes)")
             else:
-                print(f"File does not exist after writing: {file_path}")
+                print(f"ERROR: File does not exist after writing: {file_path}")
                 
         except Exception as e:
-            print(f"Error saving file: {str(e)}")
+            print(f"Error during file save: {str(e)}")
+            import traceback
+            traceback.print_exc()
             raise
-            
+                    
+        # Return the relative path for database storage
         return os.path.join(subdir, unique_filename)
 
     def delete_file(self, file_path):

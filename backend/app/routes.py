@@ -1,3 +1,4 @@
+import time
 from flask import Blueprint, request, jsonify, session, make_response, current_app
 from sqlalchemy import or_
 from google.oauth2 import id_token
@@ -15,7 +16,6 @@ from flask import send_from_directory
 import os
 
 # Add these configurations at the top of your routes file
-UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -317,6 +317,7 @@ def get_user_info(user_id):
 
 @bp.route('/current-user', methods=['GET'])
 def get_current_user_info():
+
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
         if user:
@@ -380,16 +381,21 @@ def create_listing():
         for image in other_image_paths:
             path = new_listing.save_uploaded_file(image, is_thumbnail=False)
             other_paths.append(path)
+        
         new_listing.other_image_paths = other_paths
         logger.debug(f"Other image paths: {other_paths}")
 
         db.session.add(new_listing)
         db.session.commit()
         
+        time.sleep(30)  # Wait for the file to be saved
+
+
         return jsonify({
             "message": "Listing created successfully",
             "listing": new_listing.to_dict()
         }), 201
+
 
     except Exception as e:
         logger.error(f"Error creating listing: {str(e)}")
@@ -400,6 +406,7 @@ def create_listing():
 
 @bp.route('/get-listings', methods=['GET'])
 def get_listings():
+
     # Get basic pagination parameters
     query = request.args.get('query', '')
     page = int(request.args.get('page', 1))

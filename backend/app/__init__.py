@@ -4,22 +4,24 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from app.config import Config
 from flask_session import Session
+import os
+from flask import current_app
 
 db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app():
-     app = Flask(__name__, static_folder='static', static_url_path='/static')
-     app.config.from_object(Config)
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-     CORS(app, 
-         origins=['http://localhost:3000', 'http://127.0.0.1:5000'], 
-         supports_credentials=True, 
-         allow_headers=['Content-Type', 'Authorization'])
+    CORS(app, 
+        origins=['http://localhost:3000', 'http://127.0.0.1:5000'], 
+        supports_credentials=True, 
+        allow_headers=['Content-Type', 'Authorization'])
     
-     Session(app)
-     db.init_app(app)
-     migrate.init_app(app, db)
+    Session(app)
+    db.init_app(app)
+    migrate.init_app(app, db)
      
 
      # Don't automatically create tables on app startup
@@ -27,7 +29,7 @@ def create_app():
      # with app.app_context():
      #     db.create_all()
 
-     from app import routes
-     app.register_blueprint(routes.bp)
-
-     return app
+    from app import routes
+    app.register_blueprint(routes.bp)
+    
+    return app

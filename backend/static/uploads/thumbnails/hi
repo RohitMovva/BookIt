@@ -1,0 +1,23 @@
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+$session.Cookies.Add((New-Object System.Net.Cookie("session", "PnpcF7zgQHd7vvbJHvKE-dk85hQCjjHJU9--QhOnhvY", "/", "127.0.0.1")))
+Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:5000/create-listing" `
+-Method "POST" `
+-WebSession $session `
+-Headers @{
+"Accept"="application/json, text/plain, */*"
+  "Accept-Encoding"="gzip, deflate, br, zstd"
+  "Accept-Language"="en-US,en;q=0.6"
+  "Origin"="http://localhost:3000"
+  "Referer"="http://localhost:3000/"
+  "Sec-Fetch-Dest"="empty"
+  "Sec-Fetch-Mode"="cors"
+  "Sec-Fetch-Site"="cross-site"
+  "Sec-Fetch-Storage-Access"="none"
+  "Sec-GPC"="1"
+  "sec-ch-ua"="`"Chromium`";v=`"134`", `"Not:A-Brand`";v=`"24`", `"Brave`";v=`"134`""
+  "sec-ch-ua-mobile"="?0"
+  "sec-ch-ua-platform"="`"Windows`""
+} `
+-ContentType "multipart/form-data; boundary=----WebKitFormBoundaryfSOffz4CoQMGDIO0" `
+-Body ([System.Text.Encoding]::UTF8.GetBytes("------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"title`"$([char]13)$([char]10)$([char]13)$([char]10)k$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"description`"$([char]13)$([char]10)$([char]13)$([char]10)ii$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"price`"$([char]13)$([char]10)$([char]13)$([char]10)333$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"phone_number`"$([char]13)$([char]10)$([char]13)$([char]10)4445556667$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"email_address`"$([char]13)$([char]10)$([char]13)$([char]10)$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"condition`"$([char]13)$([char]10)$([char]13)$([char]10)Good$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"class_type`"$([char]13)$([char]10)$([char]13)$([char]10)english$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0$([char]13)$([char]10)Content-Disposition: form-data; name=`"thumbnail`"; filename=`"IMG_1497.png`"$([char]13)$([char]10)Content-Type: image/png$([char]13)$([char]10)$([char]13)$([char]10)$([char]13)$([char]10)------WebKitFormBoundaryfSOffz4CoQMGDIO0--$([char]13)$([char]10)"))
